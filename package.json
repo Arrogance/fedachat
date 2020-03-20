@@ -1,0 +1,49 @@
+{
+    "name": "@arrogance/fedachat",
+    "version": "1.0.0",
+    "description": "Fedachat is a groupal video with live chat using agora.io",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack --progress --display-error-details",
+        "lint": "eslint src/**/*.{js,jsx} --fix",
+        "dev": "webpack-dev-server --progress --colors --inline --content-base public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Arrogance/fedachat.git"
+    },
+    "author": "Manuel Raya <manuel@arrogance.es>",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Arrogance/fedachat/issues"
+    },
+    "homepage": "https://github.com/Arrogance/fedachat#readme",
+    "dependencies": {
+        "agora-rtc-sdk": "^3.0.2",
+        "bootstrap": "^4.4.1",
+        "bootstrap-vue": "^2.7.0",
+        "copy-webpack-plugin": "^5.1.1",
+        "js-cookie": "^2.2.1",
+        "terser-webpack-plugin": "^2.3.5",
+        "webpack": "^4.42.0",
+        "webpack-dev-server": "^3.10.3"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.8.7",
+        "@babel/preset-env": "^7.8.7",
+        "babel-loader": "^8.0.6",
+        "css-loader": "^3.4.2",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.10.0",
+        "eslint-config-xo": "^0.29.1",
+        "eslint-plugin-prettier": "^3.1.2",
+        "mini-css-extract-plugin": "^0.9.0",
+        "node-sass": "^4.13.1",
+        "sass-loader": "^8.0.2",
+        "vue": "^2.6.11",
+        "vue-loader": "^15.9.1",
+        "vue-router": "^3.1.6",
+        "vue-template-compiler": "^2.6.11",
+        "webpack-cli": "^3.3.11"
+    }
+}
