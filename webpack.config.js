@@ -6,6 +6,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
 const PATHS = {
     src: path.resolve(__dirname, 'src'),
+    server: path.resolve(__dirname, 'server'),
     style: path.resolve(__dirname, 'style'),
     build: path.resolve(__dirname, 'public'),
     images: path.join(__dirname, 'images')

@@ -4,8 +4,6 @@
             <b-row>
                 <b-col cols="12">
                     <div id="video-canvas"></div>
-
-                    123
                 </b-col>
             </b-row>
         </b-container>
@@ -27,7 +25,7 @@
         AGORA_APP_ID,
         AGORA_TOKEN
     } from '../../config';
-    import {log} from "../../agora/src/utils/Logger";
+    import {log} from '../plugins/logger';
 
     export default {
         props: {
@@ -74,7 +72,10 @@
                 },
                 streamList: [],
                 mainId: null,
-                mainStream: null
+                mainStream: null,
+                localStream: null,
+                shareClient: null,
+                shareStream: null
             }
         },
         methods: {
@@ -88,7 +89,7 @@
                     transcode: options.transcode || "interop",
                     attendeeMode: options.attendeeMode || "video",
                     baseMode: options.baseMode || "avc",
-                    displayMode: 1, // 0 Tile, 1 PIP, 2 screen share
+                    displayMode: 0, // 0 Tile, 1 PIP, 2 screen share
                     uid: undefined, // In default it is dynamically generated
                     resolution: undefined,
                 }
@@ -156,24 +157,207 @@
                     }
                 );
             },
-            addStream: (stream, push = false) => {
+            addStream: (stream, push = false, _this) => {
                 let id = stream.getId();
-                // Check for redundant
-                let redundant = this.streamList.some(item => {
+                let redundant = _this.streamList.some(item => {
                     return item.getId() === id;
                 });
 
                 if (redundant) {
                     return;
                 }
+
                 // Do push for localStream and unshift for other streams
-                push ? this.streamList.push(stream) : this.streamList.unshift(stream);
-                if (this.streamList.length > 4) {
-                    options.displayMode = options.displayMode === 1 ? 0 : options.displayMode;
-                    ButtonControl.disable([".displayModeBtn", ".disableRemoteBtn"]);
+                push ? _this.streamList.push(stream) : _this.streamList.unshift(stream);
+                if (_this.streamList.length > 4) {
+                    _this.clientOptions.displayMode = _this.clientOptions.displayMode === 1 ? 0 : _this.clientOptions.displayMode;
+                    // ButtonControl.disable([".displayModeBtn", ".disableRemoteBtn"]);
                 }
 
-                Renderer.customRender(this.streamList, options.displayMode, this.mainId);
+                Renderer.customRender(_this.streamList, _this.clientOptions.displayMode, _this.mainId);
+            },
+            setHighStream: (prev, next, _this) => {
+                if (prev === next) {
+                    return;
+                }
+
+                let prevStream;
+                let nextStream;
+
+                // Get stream by id
+                for (let stream of _this.streamList) {
+                    let id = stream.getId();
+                    if (id === prev) {
+                        prevStream = stream;
+                    } else if (id === next) {
+                        nextStream = stream;
+                    } else {
+                        // Do nothing
+                    }
+                }
+
+                // Set prev stream to low
+                prevStream && _this.client.setRemoteVideoStreamType(prevStream, 1);
+                // Set next stream to high
+                nextStream && _this.client.setRemoteVideoStreamType(nextStream, 0);
+            },
+            getStreamById: id => {
+                return this.streamList.filter(item => {
+                    return item.getId() === id;
+                })[0];
+            },
+            subscribeStreamEvents: (client, localStream, _this) => {
+                client.on("stream-added", function(evt) {
+                    let stream = evt.stream;
+                    let id = stream.getId();
+                    log("New stream added: " + id);
+                    log(new Date().toLocaleTimeString());
+                    log("Subscribe ", stream);
+                    if (id === AGORA_SHARE_ID) {
+                        _this.clientOptions.displayMode = 2;
+                        _this.mainId = id;
+                        _this.mainStream = stream;
+                        if (!_this.shareClient) {
+                            // ButtonControl.disable(".shareScreenBtn");
+                        }
+                        // ButtonControl.disable([".displayModeBtn", ".disableRemoteBtn"]);
+                    }
+
+                    if (id !== _this.mainId) {
+                        if (_this.clientOptions.displayMode === 2) {
+                            client.setRemoteVideoStreamType(stream, 1);
+                        } else {
+                            _this.mainStream && client.setRemoteVideoStreamType(_this.mainStream, 1);
+                            _this.mainStream = stream;
+                            _this.mainId = id;
+                        }
+                    }
+                    client.subscribe(stream, function(err) {
+                        log("Subscribe stream failed", err);
+                    });
+                });
+
+                client.on("peer-leave", function(evt) {
+                    let id = evt.uid;
+                    log("Peer has left: " + id);
+                    log(new Date().toLocaleTimeString());
+                    if (id === AGORA_SHARE_ID) {
+                        _this.clientOptions.displayMode = 0;
+                        if (_this.clientOptions.attendeeMode === "video") {
+                            // ButtonControl.enable(".shareScreenBtn");
+                        }
+                        // ButtonControl.enable([".displayModeBtn", ".disableRemoteBtn"]);
+                        this.shareEnd();
+                    }
+                    if (id === _this.mainId) {
+                        let next = _this.clientOptions.displayMode === 2 ? AGORA_SHARE_ID : _this.localStream.getId();
+                        _this.setHighStream(_this.mainId, next, _this);
+                        _this.mainId = next;
+                        _this.mainStream = _this.getStreamById(_this.mainId);
+                    }
+
+                    this.removeStream(evt.uid);
+                });
+
+                client.on("stream-subscribed", function(evt) {
+                    let stream = evt.stream;
+                    log("Got stream-subscribed event");
+                    log(new Date().toLocaleTimeString());
+                    log("Subscribe remote stream successfully: " + stream.getId());
+                    _this.addStream(stream, false, _this);
+                });
+
+                client.on("stream-removed", function(evt) {
+                    let stream = evt.stream;
+                    let id = stream.getId();
+                    log("Stream removed: " + id);
+                    log(new Date().toLocaleTimeString());
+                    if (id === AGORA_SHARE_ID) {
+                        _this.clientOptions.displayMode = 0;
+                        if (_this.clientOptions.attendeeMode === "video") {
+                            // ButtonControl.enable(".shareScreenBtn");
+                        }
+                        // ButtonControl.enable([".displayModeBtn", ".disableRemoteBtn"]);
+                        _this.shareEnd();
+                    }
+
+                    if (id === _this.mainId) {
+                        let next = this.clientOptions.displayMode === 2 ? AGORA_SHARE_ID : localStream.getId();
+                        _this.setHighStream(_this.mainId, next, _this);
+                        _this.mainId = next;
+                        _this.mainStream = _this.getStreamById(_this.mainId);
+                    }
+
+                    _this.removeStream(stream.getId());
+                });
+            },
+            shareEnd: () => {
+                try {
+                    this.shareClient && this.shareClient.unpublish(this.shareStream);
+                    this.shareStream && this.shareStream.close();
+                    this.shareClient &&
+                    this.shareClient.leave(
+                        () => {
+                            log("Share client succeed to leave.");
+                        },
+                        () => {
+                            log("Share client failed to leave.");
+                        }
+                    );
+                } finally {
+                    this.shareClient = null;
+                    this.shareStream = null;
+                }
+            },
+            shareStart: () => {
+                // ButtonControl.disable(".shareScreenBtn");
+                this.shareClient = AgoraRTC.createClient({
+                    mode: this.clientOptions.transcode
+                });
+
+                let shareOptions = Object.assign(this.clientOptions, {
+                    uid: AGORA_SHARE_ID
+                });
+
+                this.clientInit(this.shareClient, shareOptions).then(uid => {
+                    let config = {
+                        screen: true,
+                        video: false,
+                        audio: false,
+                        extensionId: "minllpmhdgpndnkomcoccfekfegnlikg",
+                        mediaSource: "application"
+                    };
+
+                    this.shareStream = this.streamInit(uid, shareOptions, config);
+                    this.shareStream.init(
+                        () => {
+                            // ButtonControl.enable(".shareScreenBtn");
+                            this.shareStream.on("stopScreenSharing", () => {
+                                this.shareEnd();
+                                log("Stop Screen Sharing at" + new Date());
+                            });
+                            this.shareClient.publish(this.shareStream, err => {
+                                log("Publish share stream error: " + err);
+                                log("getUserMedia failed", err);
+                            });
+                        },
+                        err => {
+                            // ButtonControl.enable(".shareScreenBtn");
+                            log("getUserMedia failed", err);
+                            this.shareEnd();
+                            if (isChrome()) {
+                                // If (!chrome.app.isInstalled) {
+                                let msg = `
+            Please install chrome extension from
+            <a href="https://chrome.google.com/webstore/detail/minllpmhdgpndnkomcoccfekfegnlikg">Google Webstore</a>
+            before using sharing screen.
+          `;
+                                // Notify.danger(msg, 5000);
+                                // }
+                            }
+                        }
+                    );
+                });
             }
         },
         mounted() {
@@ -197,6 +381,10 @@
                 mode: this.clientOptions.transcode
             });
 
+            this.client = Client;
+            this.enableDualStream(Client);
+            this.subscribeStreamEvents(Client, this.localStream, this);
+
             this.clientInit(Client, this.clientOptions).then(uid => {
                 let config = isSafari()
                     ? {}
@@ -205,22 +393,20 @@
                         microphoneId: this.clientOptions.microphoneId
                     };
 
-                const localStream = this.streamInit(uid, this.clientOptions, config);
+                this.localStream = this.streamInit(uid, this.clientOptions, config);
 
                 // Enable dual stream
                 if (this.clientOptions.attendeeMode !== "audience") {
                     // MainId default to be localStream's ID
                     this.mainId = uid;
-                    this.mainStream = localStream;
+                    this.mainStream = this.localStream;
                 }
 
-                this.enableDualStream(Client);
-
-                localStream.init(
+                this.localStream.init(
                     () => {
                         if (options.attendeeMode !== "audience") {
-                            this.addStream(localStream, true);
-                            Client.publish(localStream, err => {
+                            this.addStream(this.localStream, true, this);
+                            Client.publish(this.localStream, err => {
                                 log("Publish local stream error: " + err);
                             });
                         }
@@ -230,7 +416,7 @@
                     }
                 );
 
-                console.log(localStream);
+                log(this.localStream);
             });
         }
     }

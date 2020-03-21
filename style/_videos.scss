@@ -1,0 +1,16 @@
+#video-canvas {
+    text-align: center;
+    margin: 0 auto;
+    .video-item {
+        //height: 350px;
+        //width: 450px;
+        display: inline-block;
+        video {
+            position: relative !important;
+        }
+
+        @media only screen and (min-width : 768px) {
+            width: 415px;
+        }
+    }
+}

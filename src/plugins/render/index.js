@@ -14,10 +14,6 @@ export default {
     },
 
     customRender(streamList, mode, mainId) {
-        // Reinit canvas style first
-        this.canvas.classList.remove('container__flex');
-        this.canvas.classList.add('container__grid');
-
         // Get no
         let no = streamList.length;
         mainId =
@@ -28,7 +24,6 @@ export default {
         // We should consider no, isMobileSize, currentMode
         if ((no > 4 && mode === 1) || no > 8) {
             mode = 0;
-            console.log('Automatically switch to tile mode...');
             this.rendererFactory(streamList, mode, mainId);
         } else {
             this.rendererFactory(streamList, mode, mainId);
@@ -47,24 +42,28 @@ export default {
         }
     },
 
-    updateVideoItem(stream, style, fit = false) {
+    updateVideoItem(stream, style, fit = true) {
         let id = stream.getId();
         let dom = document.querySelector('#video-item-' + id);
         if (!dom) {
             dom = document.createElement('section');
             let box = document.createElement('div');
             dom.setAttribute('id', 'video-item-' + id);
-            dom.setAttribute('class', 'video-item');
+            dom.setAttribute('class', 'video-item ml-1 mr-1 mt-3');
             box.setAttribute('class', 'video-item-box');
             dom.appendChild(box);
             this.canvas.appendChild(dom);
             stream.play('video-item-' + id);
         }
 
+        dom.querySelectorAll('div').forEach(e => {
+            e.classList.add('rounded');
+        });
+
         if (fit) {
-            dom.classList.add('window__fit');
+            // dom.classList.add('window__fit');
         } else {
-            dom.classList.remove('window__fit');
+            // dom.classList.remove('window__fit');
         }
 
         dom.setAttribute('style', style);
@@ -89,9 +88,11 @@ export default {
             maxRatio: this.MAX_RATIO,
             count: streamList.length
         });
+
         // Use flex box container
-        this.canvas.classList.remove('container__grid');
-        this.canvas.classList.add('container__flex');
+        // this.canvas.classList.remove('container__grid');
+        // this.canvas.classList.add('container__flex');
+
         for (let stream of streamList) {
             this.updateVideoItem(stream, `width: ${width}px; height: ${height}px;`);
         }

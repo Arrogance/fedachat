@@ -1,15 +1,27 @@
 <template>
     <section id="index">
-        <app-videos camera-id="123"></app-videos>
+        <b-container fluid="">
+            <b-row>
+                <b-col cols="7">
+                    <app-videos camera-id="123" attendee-mode="audience"></app-videos>
+                </b-col>
+
+                <b-col cols="5">
+                    <app-chat></app-chat>
+                </b-col>
+            </b-row>
+        </b-container>
     </section>
 </template>
 
 <script>
     import VideosComponent from '../components/videos.vue'
+    import ChatComponent from '../components/chat.vue'
 
     export default {
         components: {
-            'app-videos': VideosComponent
-        }
+            'app-videos': VideosComponent,
+            'app-chat': ChatComponent
+        },
     }
 </script>
