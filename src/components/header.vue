@@ -14,6 +14,9 @@
 
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item>
+                        <app-broadcast-initializer></app-broadcast-initializer>
+                    </b-nav-item>
+                    <b-nav-item>
                         <span v-if="this.$root.username" v-text="this.$root.username" @click="toggleModal"></span>
                         <span v-else @click="toggleModal">Elegir un nick...</span>
                     </b-nav-item>
@@ -38,11 +41,16 @@
 </template>
 
 <script>
+    import BroadcastInitializerComponent from '../components/broadcast_initializer.vue'
+
     export default {
         data() {
             return {
                 username: ''
             }
+        },
+        components: {
+            'app-broadcast-initializer': BroadcastInitializerComponent
         },
         methods: {
             onUsernameSubmit: function() {

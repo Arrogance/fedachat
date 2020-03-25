@@ -15,7 +15,7 @@
 
                     <b-col cols="2">
                         <ul>
-                            <li v-for="user in users">{{ user }}</li>
+                            <li v-for="user in this.$root.users">{{ user }}</li>
                         </ul>
                     </b-col>
                 </b-row>
@@ -52,20 +52,27 @@
             sendMessage: function() {
                 let message = this.$root.username +': '+ this.message;
                 this.$root.socket.emit('message', message);
+
                 this.message = '';
             },
             userConnectedEvent: function() {
                 let message = this.$root.username +' se ha conectado.';
+
                 this.$root.socket.emit('message', message);
+                this.$root.socket.emit('user_connected', this.$root.username);
             },
             userNameModified: function(event) {
-                let message = event.oldUsername +' ahora se llama '+this.$root.username;
-                this.$root.socket.emit('message', message);
-                this.$root.users = this.$root.users.filter(function(value) {
-                    return value !== event.oldUsername;
-                });
+                let message = event.oldUsername +' ahora se llama '+this.$root.username +'.';
 
-                this.$root.users.push(this.$root.username);
+                this.$root.socket.emit('message', message);
+                this.$root.socket.emit('user_disconnected', event.oldUsername);
+                this.$root.socket.emit('user_connected', this.$root.username);
+
+                // this.$root.users = this.$root.users.filter(function(value) {
+                //     return value !== event.oldUsername;
+                // });
+                //
+                // this.$root.users.push(this.$root.username);
             }
         },
         mounted: function() {

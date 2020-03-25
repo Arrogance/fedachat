@@ -71,9 +71,11 @@
                     token: AGORA_TOKEN
                 },
                 streamList: [],
+                devices: [],
                 mainId: null,
                 mainStream: null,
                 localStream: null,
+                videoStream: null,
                 shareClient: null,
                 shareStream: null
             }
@@ -358,6 +360,50 @@
                         }
                     );
                 });
+            },
+            setDevice: function() {
+                if (!this.videoStream) {
+                    throw Error("Stream not existed!");
+                }
+
+                return new Promise((resolve, reject) => {
+                    let id = this.localStream.getId();
+                    this.client.unpublish(this.videoStream);
+
+                    this.videoStream.stop();
+                    this.videoStream.close();
+
+                    // Reinit stream
+                    let defaultConfig = {
+                        streamID: id,
+                        audio: true,
+                        video: true,
+                        screen: false,
+                        cameraId: 'default',
+                        microphoneId: 'default'
+                    };
+
+                    // eslint-disable-next-line
+                    this.videoStream = AgoraRTC.createStream(defaultConfig);
+                    this.videoStream.setVideoProfile(
+                        this.clientOptions.videoProfile
+                    );
+
+                    // Init VIDEO
+                    this.videoStream.init(
+                        () => {
+                            // if (!$("#enableVideo").prop("checked")) {
+                            //     this.localStream.disableVideo();
+                            // }
+                            this.client.publish(this.videoStream);
+                            resolve();
+                        },
+                        err => {
+                            console.log("getUserMedia failed", err);
+                            reject(err);
+                        }
+                    );
+                });
             }
         },
         mounted() {
@@ -393,6 +439,20 @@
                         microphoneId: this.clientOptions.microphoneId
                     };
 
+                if (isSafari()) {
+
+                } else {
+                    // eslint-disable-next-line
+                    AgoraRTC.getDevices(function(devices) {
+                        console.log(devices);
+                        this.devices = devices;
+                        devices.forEach(function(item) {
+                            console.log(item);
+                            // this.deviceId = item.deviceId;
+                        });
+                    });
+                }
+
                 this.localStream = this.streamInit(uid, this.clientOptions, config);
 
                 // Enable dual stream
@@ -402,21 +462,21 @@
                     this.mainStream = this.localStream;
                 }
 
-                this.localStream.init(
-                    () => {
-                        if (options.attendeeMode !== "audience") {
-                            this.addStream(this.localStream, true, this);
-                            Client.publish(this.localStream, err => {
-                                log("Publish local stream error: " + err);
-                            });
-                        }
-                    },
-                    err => {
-                        log("getUserMedia failed", err);
-                    }
-                );
+                // this.localStream.init(
+                //     () => {
+                //         if (this.clientOptions.attendeeMode !== "audience") {
+                //             this.addStream(this.localStream, true, this);
+                //             Client.publish(this.localStream, err => {
+                //                 log("Publish local stream error: " + err);
+                //             });
+                //         }
+                //     },
+                //     err => {
+                //         log("getUserMedia failed", err);
+                //     }
+                // );
 
-                log(this.localStream);
+                // this.setDevice();
             });
         }
     }

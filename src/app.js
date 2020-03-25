@@ -31,6 +31,19 @@ let userName = randomWords({
     }
 });
 
+let mediaEnabled = false;
+if (navigator.mediaDevices !== undefined) {
+    navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then(function(mediaStream) {
+            console.log(mediaStream);
+            mediaEnabled = true;
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+}
+
 const socket = io();
 
 const App = new Vue({
@@ -41,22 +54,21 @@ const App = new Vue({
     data: {
         socket: socket,
         users: [],
-        username: userName.join('_')
+        username: userName.join('_'),
+        cameraId: null,
+        microphoneId: null,
+        mediaEnabled: mediaEnabled
     },
     methods: {
-        addUserConnected: function(socket) {
-            socket.emit('users', this.users);
-        },
         refreshUserConnected: function(users) {
             console.log('Foo', users);
             this.users = users;
         }
     },
     mounted() {
-        this.$emit('user_connected');
-        this.addUserConnected(socket);
-
         socket.on('users', this.refreshUserConnected);
+
+        this.$emit('user_connected');
     },
     router: Router
 });
