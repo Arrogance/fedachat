@@ -14,10 +14,10 @@
 
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item>
-                        <app-broadcast-initializer v-if="this.$root.mediaEnabled"></app-broadcast-initializer>
+                        <app-broadcast-initializer></app-broadcast-initializer>
                     </b-nav-item>
                     <b-nav-item>
-                        <span v-if="this.$root.username" v-text="this.$root.username" @click="toggleModal"></span>
+                        <span v-if="this.$root.userName" v-text="this.$root.userName" @click="toggleModal"></span>
                         <span v-else @click="toggleModal">Elegir un nick...</span>
                     </b-nav-item>
                 </b-navbar-nav>
@@ -29,7 +29,7 @@
                 <b-form id="username-form" v-on:submit.prevent="">
                     <b-form-group id="username-group">
                         <b-form >
-                            <b-form-input id="username" v-model="username" v-on:keydown.enter.prevent='onUsernameSubmit' type="text" required></b-form-input>
+                            <b-form-input id="username" v-model="userName" v-on:keydown.enter.prevent='onUsernameSubmit' type="text" required></b-form-input>
                         </b-form>
                     </b-form-group>
 
@@ -46,7 +46,7 @@
     export default {
         data() {
             return {
-                username: ''
+                userName: ''
             }
         },
         components: {
@@ -54,15 +54,15 @@
         },
         methods: {
             onUsernameSubmit: function() {
-                if (this.username.length === 0) {
+                if (this.userName.length === 0) {
                     return;
                 }
 
-                let oldUsername = this.$root.username;
-                this.$root.username = this.username;
+                let oldUsername = this.$root.userName;
+                this.$root.userName = this.userName;
                 this.toggleModal();
 
-                this.$root.$emit('user_name_changed', {
+                this.$root.$emit('username_changed', {
                     oldUsername: oldUsername
                 });
             },

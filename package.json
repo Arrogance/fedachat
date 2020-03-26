@@ -29,6 +29,7 @@
         "js-cookie": "^2.2.1",
         "socket.io": "^2.3.0",
         "terser-webpack-plugin": "^2.3.5",
+        "uuid": "^7.0.2",
         "webpack-dev-server": "^3.10.3"
     },
     "devDependencies": {

@@ -37,7 +37,41 @@
             toggleModal() {
                 // We pass the ID of the button that we want to return focus to
                 // when the modal has hidden
-                this.$refs['broadcast-initializer-modal'].toggle('#toggle-btn')
+                this.$refs['broadcast-initializer-modal'].toggle('#toggle-btn');
+
+                this.videoDevices = [];
+                this.audioDevices = [];
+
+                if (navigator.mediaDevices !== undefined) {
+                    navigator.mediaDevices
+                        .getUserMedia({ audio: true, video: true })
+                        .then(function(mediaStream) {
+                            this.$root.mediaEnabled = true;
+                        })
+                        .catch(function(err) {
+                            console.log(err);
+                        })
+                    ;
+
+                    let _this = this;
+                    AgoraRTC.getDevices(function(devices) {
+                        if (devices === undefined) {
+                            return;
+                        }
+
+                        devices.forEach(function(device) {
+                            switch(device.kind) {
+                                case 'audioinput':
+                                    _this.audioDevices.push(device);
+                                    break;
+
+                                case 'videoinput':
+                                    _this.videoDevices.push(device);
+                                    break;
+                            }
+                        });
+                    });
+                }
             },
             setVideoDevice(device) {
                 this.$root.$emit('camera_selected', device);
@@ -48,6 +82,8 @@
             startBroadcasting() {
                 this.$root.$emit('start_broadcasting');
                 this.broadcasting = true;
+
+                this.toggleModal();
             },
             stopBroadcasting() {
                 this.$root.$emit('stop_broadcasting');
@@ -65,24 +101,6 @@
 
             this.$root.$on('stopped_broadcasting', function() {
                 _this.broadcasting = false;
-            });
-
-            AgoraRTC.getDevices(function(devices) {
-                if (devices === undefined) {
-                    return;
-                }
-
-                devices.forEach(function(device) {
-                    switch(device.kind) {
-                        case 'audioinput':
-                            _this.audioDevices.push(device);
-                            break;
-
-                        case 'videoinput':
-                            _this.videoDevices.push(device);
-                            break;
-                    }
-                });
             });
         }
     }

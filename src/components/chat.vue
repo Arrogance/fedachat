@@ -1,13 +1,14 @@
 <template>
     <section id="app-chat">
         <b-container>
-            <b-form v-if="this.$root.username" v-on:submit.prevent="sendMessage">
+            <b-form v-if="this.$root.userName" v-on:submit.prevent="sendMessage">
                 <b-row>
                     <b-col cols="10" class="p-0">
                         <ul class="messages">
                             <li v-for="m in messages" class="message left appeared">
                                 <div class="text_wrapper">
-                                    <div class="text" v-text="m"></div>
+                                    <div class="avatar">{{ m.userName }}</div>
+                                    <div class="text" v-text="m.content"></div>
                                 </div>
                             </li>
                         </ul>
@@ -15,7 +16,7 @@
 
                     <b-col cols="2">
                         <ul>
-                            <li v-for="user in this.$root.users">{{ user }}</li>
+                            <li v-for="user in this.$root.users">{{ user.userName }}</li>
                         </ul>
                     </b-col>
                 </b-row>
@@ -50,34 +51,49 @@
         },
         methods: {
             sendMessage: function() {
-                let message = this.$root.username +': '+ this.message;
-                this.$root.socket.emit('message', message);
+                this.$root.socket.emit('message', {
+                    userName: this.$root.userName,
+                    type: 'chat',
+                    content: this.message
+                });
 
                 this.message = '';
             },
             userConnectedEvent: function() {
-                let message = this.$root.username +' se ha conectado.';
+                let message = this.$root.userName +' se ha conectado.';
 
-                this.$root.socket.emit('message', message);
-                this.$root.socket.emit('user_connected', this.$root.username);
+                this.$root.socket.emit('message', {
+                    type: 'connection',
+                    content: message
+                });
+            },
+            userDisconnectedEvent: function(user) {
+                let message = user.userName +' se ha desconectado.';
+
+                this.$root.socket.emit('message', {
+                    type: 'disconnection',
+                    content: message
+                });
             },
             userNameModified: function(event) {
-                let message = event.oldUsername +' ahora se llama '+this.$root.username +'.';
+                let message = event.oldUsername +' ahora se llama '+this.$root.userName +'.';
 
-                this.$root.socket.emit('message', message);
-                this.$root.socket.emit('user_disconnected', event.oldUsername);
-                this.$root.socket.emit('user_connected', this.$root.username);
-
-                // this.$root.users = this.$root.users.filter(function(value) {
-                //     return value !== event.oldUsername;
-                // });
-                //
-                // this.$root.users.push(this.$root.username);
+                this.$root.socket.emit('message', {
+                    type: 'username_changed',
+                    content: message
+                });
             }
         },
         mounted: function() {
-            this.username = this.$root.username;
+            this.userName = this.$root.userName;
             this.users = this.$root.users;
+
+            this.$root.socket.on('messages', (messages) => {
+                this.messages = messages;
+
+                let messageDom = $('.messages');
+                messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
+            });
 
             this.$root.socket.on('message', (message) => {
                 this.messages.push(message);
@@ -87,7 +103,8 @@
             });
 
             this.$root.$on('user_connected', this.userConnectedEvent);
-            this.$root.$on('user_name_changed', this.userNameModified);
+            this.$root.$on('user_disconnected', this.userDisconnectedEvent);
+            this.$root.$on('username_changed', this.userNameModified);
         }
     }
 </script>

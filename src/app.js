@@ -40,14 +40,14 @@ const App = new Vue({
     data: {
         socket: socket,
         users: [],
-        username: userName.join('_'),
+        userName: userName.join('_'),
+        user: null,
         cameraId: null,
         microphoneId: null,
         mediaEnabled: false
     },
     methods: {
         refreshUserConnected: function(users) {
-            console.log('Foo', users);
             this.users = users;
         }
     },
@@ -64,19 +64,30 @@ const App = new Vue({
             this.microphoneId = device.deviceId;
         });
 
-        this.$emit('user_connected');
+        this.$on('username_changed', function(event) {
+            this.$root.socket.emit('user_disconnected', event.oldUsername);
+            this.$root.socket.emit('user_connected', {
+                userName: this.userName
+            });
+        });
 
-        if (navigator.mediaDevices !== undefined) {
-            navigator.mediaDevices
-                .getUserMedia({ audio: true, video: true })
-                .then(function(mediaStream) {
-                    _this.mediaEnabled = true;
-                    console.log(mediaStream);
-                })
-                .catch(function(err) {
-                    console.log(err);
-                });
-        }
+        this.socket.emit('user_connected', {
+            userName: _this.userName
+        });
+
+        this.socket.on('user_details', function(user) {
+            _this.userName = user.userName;
+            _this.user = {
+                userName: user.userName,
+                uuid: user.uuid
+            };
+        });
+
+        this.socket.on('user_disconnected', function(user) {
+            _this.$emit('user_disconnected', user);
+        });
+
+        this.$emit('user_connected');
     },
     router: Router
 });

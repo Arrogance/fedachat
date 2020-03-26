@@ -2,9 +2,9 @@
     <section id="videos">
         <b-container fluid="">
             <b-row>
-                <b-col cols="12">
+<!--                <b-col cols="12">-->
                     <div id="video-canvas"></div>
-                </b-col>
+<!--                </b-col>-->
             </b-row>
         </b-container>
     </section>
@@ -13,12 +13,6 @@
 <script>
     import AgoraRTC from 'agora-rtc-sdk';
     import Renderer from '../plugins/render'
-    import {
-        isSafari,
-        isMobileSize,
-        isChrome,
-        isFirefox
-    } from "../plugins/browsercheck";
     import {
         AGORA_SHARE_ID,
         AGORA_RESOLUTION_ARR,
@@ -164,13 +158,8 @@
                     return;
                 }
 
-                // Do push for localStream and unshift for other streams
                 push ? _this.streamList.push(stream) : _this.streamList.unshift(stream);
-                // if (_this.streamList.length > 4) {
-                //     _this.clientOptions.displayMode = _this.clientOptions.displayMode === 1 ? 0 : _this.clientOptions.displayMode;
-                //     // ButtonControl.disable([".displayModeBtn", ".disableRemoteBtn"]);
-                // }
-
+                stream.resume();
                 Renderer.customRender(_this.streamList, _this.clientOptions.displayMode, _this.mainId);
             },
             removeStream: (id, _this) => {
@@ -183,41 +172,8 @@
                     }
                     return 0;
                 });
-                if (_this.streamList.length <= 4 && _this.clientOptions.displayMode !== 2) {
-                    // ButtonControl.enable(".displayModeBtn");
-                }
 
                 Renderer.customRender(_this.streamList, _this.clientOptions.displayMode);
-            },
-            setHighStream: (prev, next, _this) => {
-                if (prev === next) {
-                    return;
-                }
-
-                let prevStream;
-                let nextStream;
-
-                // Get stream by id
-                for (let stream of _this.streamList) {
-                    let id = stream.getId();
-                    if (id === prev) {
-                        prevStream = stream;
-                    } else if (id === next) {
-                        nextStream = stream;
-                    } else {
-                        // Do nothing
-                    }
-                }
-
-                // Set prev stream to low
-                prevStream && _this.client.setRemoteVideoStreamType(prevStream, 1);
-                // Set next stream to high
-                nextStream && _this.client.setRemoteVideoStreamType(nextStream, 0);
-            },
-            getStreamById: (id, _this) => {
-                return _this.streamList.filter(item => {
-                    return item.getId() === id;
-                })[0];
             },
             subscribeStreamEvents: (client, _this) => {
                 client.on("stream-added", function(evt) {
@@ -313,9 +269,6 @@
                     // Init VIDEO
                     this.videoStream.init(
                         () => {
-                            // if (!$("#enableVideo").prop("checked")) {
-                            //     this.localStream.disableVideo();
-                            // }
                             this.client.publish(this.videoStream);
                             resolve();
                         },
@@ -331,9 +284,6 @@
             let _this = this;
 
             Renderer.init("video-canvas", 9 / 16, 8 / 5);
-            if (isMobileSize()) {
-                Renderer.enterFullScreen();
-            }
 
             this.clientOptions = Object.assign(this.clientOptions, this.optionsInit({
                 videoProfile: this.videoProfile,
@@ -355,7 +305,6 @@
 
             this.clientInit(this.client, this.clientOptions).then(uid => {
                 this.clientUid = uid;
-                // this.streamInit(uid, this.clientOptions);
             });
 
             this.$root.$on('start_broadcasting', function() {

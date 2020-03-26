@@ -49,7 +49,7 @@ export default {
             dom = document.createElement('section');
             let box = document.createElement('div');
             dom.setAttribute('id', 'video-item-' + id);
-            dom.setAttribute('class', 'video-item ml-1 mr-1 mt-3');
+            dom.setAttribute('class', 'video-item col-4 mt-3');
             box.setAttribute('class', 'video-item-box');
             dom.appendChild(box);
             this.canvas.appendChild(dom);
@@ -59,42 +59,14 @@ export default {
         dom.querySelectorAll('div').forEach(e => {
             e.classList.add('rounded');
         });
-
-        if (fit) {
-            // dom.classList.add('window__fit');
-        } else {
-            // dom.classList.remove('window__fit');
-        }
-
-        dom.setAttribute('style', style);
-    },
-
-    enterFullScreen() {
-        this.canvas.classList.add('fullscreen');
-    },
-
-    exitFullScreen() {
-        this.canvas.classList.remove('fullscreen');
     },
 
     /**
      * @description Tile mode renderer. Recommended for 1-N people.
      */
     tileRenderer(streamList) {
-        let { width, height } = calcSize({
-            width: this.canvas.clientWidth,
-            height: this.canvas.clientHeight,
-            minRatio: this.MIN_RATIO,
-            maxRatio: this.MAX_RATIO,
-            count: streamList.length
-        });
-
-        // Use flex box container
-        // this.canvas.classList.remove('container__grid');
-        // this.canvas.classList.add('container__flex');
-
         for (let stream of streamList) {
-            this.updateVideoItem(stream, `width: ${width}px; height: ${height}px;`);
+            this.updateVideoItem(stream);
         }
     },
 
@@ -126,14 +98,10 @@ export default {
             let stream = streamList[index];
             if (stream.getId() === mainId) {
                 // Main window
-                this.updateVideoItem(stream, `grid-area: span 12/span 24/13/25`);
+                this.updateVideoItem(stream);
             } else {
                 // Sub window
-                this.updateVideoItem(
-                    stream,
-                    `grid-area: span 3/span 4/${4 + 3 * count}/25;
-                    z-index:1;width:calc(100% - 20px);height:calc(100% - 20px)`
-                );
+                this.updateVideoItem(stream);
                 count++;
             }
         }
@@ -167,7 +135,7 @@ export default {
             // Only render main stream(sharing stream)
             for (let i = 0; i < no; i++) {
                 if (i !== mainStreamIndex) {
-                    this.updateVideoItem(streamList[i], 'display: none');
+                    this.updateVideoItem(streamList[i]);
                 }
             }
 
@@ -188,37 +156,12 @@ export default {
             }
 
             let shouldRemoveStream = tempStreamList[shouldRemoveStreamIndex];
-            this.updateVideoItem(shouldRemoveStream, 'display: none');
+            this.updateVideoItem(shouldRemoveStream);
             tempStreamList.splice(shouldRemoveStreamIndex, 1);
         }
 
         for (let stream of tempStreamList) {
-            if (stream.getId() === mainId) {
-                // When there were less than 5 people
-                // sharing stream will take more place
-                if (no === 1) {
-                    this.updateVideoItem(
-                        stream,
-                        `grid-area: span 12/span 24/13/25;`,
-                        true
-                    );
-                } else if (no < 5) {
-                    this.updateVideoItem(
-                        stream,
-                        `grid-area: span 12/span 20/13/25;`,
-                        true
-                    );
-                } else {
-                    this.updateVideoItem(
-                        stream,
-                        `grid-area: span 12/span 16/13/21;`,
-                        true
-                    );
-                }
-            } else {
-                // Normal stream
-                this.updateVideoItem(stream, `grid-area: span 4/span 4`);
-            }
+            this.updateVideoItem(stream);
         }
     }
 };
