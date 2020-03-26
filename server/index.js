@@ -57,10 +57,9 @@ io.on('connection', socket => {
         });
 
         if (user) {
-            io.emit('user_disconnected', user)
+            io.emit('user_disconnected', user);
         }
     });
 });
-
 
 http.listen(9000, () => console.log('Starting service on port 9000'));
