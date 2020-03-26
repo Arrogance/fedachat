@@ -14,7 +14,7 @@
 
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item>
-                        <app-broadcast-initializer></app-broadcast-initializer>
+                        <app-broadcast-initializer v-if="this.$root.mediaEnabled"></app-broadcast-initializer>
                     </b-nav-item>
                     <b-nav-item>
                         <span v-if="this.$root.username" v-text="this.$root.username" @click="toggleModal"></span>

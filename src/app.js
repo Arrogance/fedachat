@@ -15,7 +15,6 @@ const Router = new VueRouter({
 Vue.use(VueRouter);
 
 import HeaderComponent from './components/header.vue';
-
 import randomWords from 'random-words';
 
 let userName = randomWords({
@@ -31,19 +30,6 @@ let userName = randomWords({
     }
 });
 
-let mediaEnabled = false;
-if (navigator.mediaDevices !== undefined) {
-    navigator.mediaDevices
-        .getUserMedia({ audio: true, video: true })
-        .then(function(mediaStream) {
-            console.log(mediaStream);
-            mediaEnabled = true;
-        })
-        .catch(function(err) {
-            console.log(err);
-        });
-}
-
 const socket = io();
 
 const App = new Vue({
@@ -57,7 +43,7 @@ const App = new Vue({
         username: userName.join('_'),
         cameraId: null,
         microphoneId: null,
-        mediaEnabled: mediaEnabled
+        mediaEnabled: false
     },
     methods: {
         refreshUserConnected: function(users) {
@@ -66,9 +52,31 @@ const App = new Vue({
         }
     },
     mounted() {
+        let _this = this;
+
         socket.on('users', this.refreshUserConnected);
 
+        this.$on('camera_selected', function(device) {
+            this.cameraId = device.deviceId;
+        });
+
+        this.$on('audio_selected', function(device) {
+            this.microphoneId = device.deviceId;
+        });
+
         this.$emit('user_connected');
+
+        if (navigator.mediaDevices !== undefined) {
+            navigator.mediaDevices
+                .getUserMedia({ audio: true, video: true })
+                .then(function(mediaStream) {
+                    _this.mediaEnabled = true;
+                    console.log(mediaStream);
+                })
+                .catch(function(err) {
+                    console.log(err);
+                });
+        }
     },
     router: Router
 });

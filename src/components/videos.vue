@@ -65,19 +65,14 @@
         },
         data() {
             return {
-                client: {},
+                client: null,
+                clientUid: null,
                 clientOptions: {
                     key: AGORA_APP_ID,
                     token: AGORA_TOKEN
                 },
                 streamList: [],
-                devices: [],
-                mainId: null,
-                mainStream: null,
-                localStream: null,
-                videoStream: null,
-                shareClient: null,
-                shareStream: null
+                devices: []
             }
         },
         methods: {
@@ -171,12 +166,28 @@
 
                 // Do push for localStream and unshift for other streams
                 push ? _this.streamList.push(stream) : _this.streamList.unshift(stream);
-                if (_this.streamList.length > 4) {
-                    _this.clientOptions.displayMode = _this.clientOptions.displayMode === 1 ? 0 : _this.clientOptions.displayMode;
-                    // ButtonControl.disable([".displayModeBtn", ".disableRemoteBtn"]);
-                }
+                // if (_this.streamList.length > 4) {
+                //     _this.clientOptions.displayMode = _this.clientOptions.displayMode === 1 ? 0 : _this.clientOptions.displayMode;
+                //     // ButtonControl.disable([".displayModeBtn", ".disableRemoteBtn"]);
+                // }
 
                 Renderer.customRender(_this.streamList, _this.clientOptions.displayMode, _this.mainId);
+            },
+            removeStream: (id, _this) => {
+                _this.streamList.map((item, index) => {
+                    if (item.getId() === id) {
+                        _this.streamList[index].close();
+                        document.querySelector('#video-item-' + id).remove();
+                        _this.streamList.splice(index, 1);
+                        return 1;
+                    }
+                    return 0;
+                });
+                if (_this.streamList.length <= 4 && _this.clientOptions.displayMode !== 2) {
+                    // ButtonControl.enable(".displayModeBtn");
+                }
+
+                Renderer.customRender(_this.streamList, _this.clientOptions.displayMode);
             },
             setHighStream: (prev, next, _this) => {
                 if (prev === next) {
@@ -203,35 +214,29 @@
                 // Set next stream to high
                 nextStream && _this.client.setRemoteVideoStreamType(nextStream, 0);
             },
-            getStreamById: id => {
-                return this.streamList.filter(item => {
+            getStreamById: (id, _this) => {
+                return _this.streamList.filter(item => {
                     return item.getId() === id;
                 })[0];
             },
-            subscribeStreamEvents: (client, localStream, _this) => {
+            subscribeStreamEvents: (client, _this) => {
                 client.on("stream-added", function(evt) {
                     let stream = evt.stream;
+                    let mainStream;
                     let id = stream.getId();
-                    log("New stream added: " + id);
-                    log(new Date().toLocaleTimeString());
-                    log("Subscribe ", stream);
+
                     if (id === AGORA_SHARE_ID) {
                         _this.clientOptions.displayMode = 2;
                         _this.mainId = id;
-                        _this.mainStream = stream;
-                        if (!_this.shareClient) {
-                            // ButtonControl.disable(".shareScreenBtn");
-                        }
-                        // ButtonControl.disable([".displayModeBtn", ".disableRemoteBtn"]);
+                        mainStream = stream;
                     }
 
                     if (id !== _this.mainId) {
                         if (_this.clientOptions.displayMode === 2) {
                             client.setRemoteVideoStreamType(stream, 1);
                         } else {
-                            _this.mainStream && client.setRemoteVideoStreamType(_this.mainStream, 1);
-                            _this.mainStream = stream;
-                            _this.mainId = id;
+                            mainStream && client.setRemoteVideoStreamType(mainStream, 1);
+                            mainStream = stream;
                         }
                     }
                     client.subscribe(stream, function(err) {
@@ -239,139 +244,55 @@
                     });
                 });
 
+                client.on("stream-removed", function(evt) {
+                    _this.removeStream(evt.uid, _this);
+                });
+
                 client.on("peer-leave", function(evt) {
                     let id = evt.uid;
-                    log("Peer has left: " + id);
-                    log(new Date().toLocaleTimeString());
+
                     if (id === AGORA_SHARE_ID) {
                         _this.clientOptions.displayMode = 0;
-                        if (_this.clientOptions.attendeeMode === "video") {
-                            // ButtonControl.enable(".shareScreenBtn");
-                        }
-                        // ButtonControl.enable([".displayModeBtn", ".disableRemoteBtn"]);
-                        this.shareEnd();
-                    }
-                    if (id === _this.mainId) {
-                        let next = _this.clientOptions.displayMode === 2 ? AGORA_SHARE_ID : _this.localStream.getId();
-                        _this.setHighStream(_this.mainId, next, _this);
-                        _this.mainId = next;
-                        _this.mainStream = _this.getStreamById(_this.mainId);
                     }
 
-                    this.removeStream(evt.uid);
+                    if (id === _this.mainId) {
+                        // // if (null !== _this.localStream) {
+                        //     let next = _this.clientOptions.displayMode === 2 ? AGORA_SHARE_ID : _this.localStream.getId();
+                        //     _this.setHighStream(_this.mainId, next, _this);
+                        //     _this.mainId = next;
+                        //     _this.mainStream = _this.getStreamById(_this.mainId, _this);
+                        // // }
+                    }
+
+                    _this.removeStream(evt.uid, _this);
                 });
 
                 client.on("stream-subscribed", function(evt) {
                     let stream = evt.stream;
-                    log("Got stream-subscribed event");
-                    log(new Date().toLocaleTimeString());
-                    log("Subscribe remote stream successfully: " + stream.getId());
+
                     _this.addStream(stream, false, _this);
                 });
 
                 client.on("stream-removed", function(evt) {
                     let stream = evt.stream;
                     let id = stream.getId();
-                    log("Stream removed: " + id);
-                    log(new Date().toLocaleTimeString());
-                    if (id === AGORA_SHARE_ID) {
-                        _this.clientOptions.displayMode = 0;
-                        if (_this.clientOptions.attendeeMode === "video") {
-                            // ButtonControl.enable(".shareScreenBtn");
-                        }
-                        // ButtonControl.enable([".displayModeBtn", ".disableRemoteBtn"]);
-                        _this.shareEnd();
-                    }
 
                     if (id === _this.mainId) {
-                        let next = this.clientOptions.displayMode === 2 ? AGORA_SHARE_ID : localStream.getId();
-                        _this.setHighStream(_this.mainId, next, _this);
-                        _this.mainId = next;
-                        _this.mainStream = _this.getStreamById(_this.mainId);
+                        // if (null !== _this.localStream) {
+                        //     let next = _this.clientOptions.displayMode === 2 ? AGORA_SHARE_ID : _this.localStream.getId();
+                        //     _this.setHighStream(_this.mainId, next, _this);
+                        //     _this.mainId = next;
+                        //     _this.mainStream = _this.getStreamById(_this.mainId, _this);
+                        // }
                     }
 
-                    _this.removeStream(stream.getId());
-                });
-            },
-            shareEnd: () => {
-                try {
-                    this.shareClient && this.shareClient.unpublish(this.shareStream);
-                    this.shareStream && this.shareStream.close();
-                    this.shareClient &&
-                    this.shareClient.leave(
-                        () => {
-                            log("Share client succeed to leave.");
-                        },
-                        () => {
-                            log("Share client failed to leave.");
-                        }
-                    );
-                } finally {
-                    this.shareClient = null;
-                    this.shareStream = null;
-                }
-            },
-            shareStart: () => {
-                // ButtonControl.disable(".shareScreenBtn");
-                this.shareClient = AgoraRTC.createClient({
-                    mode: this.clientOptions.transcode
-                });
-
-                let shareOptions = Object.assign(this.clientOptions, {
-                    uid: AGORA_SHARE_ID
-                });
-
-                this.clientInit(this.shareClient, shareOptions).then(uid => {
-                    let config = {
-                        screen: true,
-                        video: false,
-                        audio: false,
-                        extensionId: "minllpmhdgpndnkomcoccfekfegnlikg",
-                        mediaSource: "application"
-                    };
-
-                    this.shareStream = this.streamInit(uid, shareOptions, config);
-                    this.shareStream.init(
-                        () => {
-                            // ButtonControl.enable(".shareScreenBtn");
-                            this.shareStream.on("stopScreenSharing", () => {
-                                this.shareEnd();
-                                log("Stop Screen Sharing at" + new Date());
-                            });
-                            this.shareClient.publish(this.shareStream, err => {
-                                log("Publish share stream error: " + err);
-                                log("getUserMedia failed", err);
-                            });
-                        },
-                        err => {
-                            // ButtonControl.enable(".shareScreenBtn");
-                            log("getUserMedia failed", err);
-                            this.shareEnd();
-                            if (isChrome()) {
-                                // If (!chrome.app.isInstalled) {
-                                let msg = `
-            Please install chrome extension from
-            <a href="https://chrome.google.com/webstore/detail/minllpmhdgpndnkomcoccfekfegnlikg">Google Webstore</a>
-            before using sharing screen.
-          `;
-                                // Notify.danger(msg, 5000);
-                                // }
-                            }
-                        }
-                    );
+                    _this.removeStream(stream.getId(), _this);
                 });
             },
             setDevice: function() {
-                if (!this.videoStream) {
-                    throw Error("Stream not existed!");
-                }
-
                 return new Promise((resolve, reject) => {
                     let id = this.localStream.getId();
-                    this.client.unpublish(this.videoStream);
-
-                    this.videoStream.stop();
-                    this.videoStream.close();
+                    this.client.unpublish(this.localStream);
 
                     // Reinit stream
                     let defaultConfig = {
@@ -379,8 +300,8 @@
                         audio: true,
                         video: true,
                         screen: false,
-                        cameraId: 'default',
-                        microphoneId: 'default'
+                        cameraId: this.$root.cameraId,
+                        microphoneId: this.$root.microphoneId
                     };
 
                     // eslint-disable-next-line
@@ -407,6 +328,8 @@
             }
         },
         mounted() {
+            let _this = this;
+
             Renderer.init("video-canvas", 9 / 16, 8 / 5);
             if (isMobileSize()) {
                 Renderer.enterFullScreen();
@@ -423,60 +346,46 @@
                 attendeeMode: this.attendeeMode,
             }));
 
-            const Client = AgoraRTC.createClient({
+            this.client = AgoraRTC.createClient({
                 mode: this.clientOptions.transcode
             });
 
-            this.client = Client;
-            this.enableDualStream(Client);
-            this.subscribeStreamEvents(Client, this.localStream, this);
+            this.enableDualStream(this.client);
+            this.subscribeStreamEvents(this.client, this);
 
-            this.clientInit(Client, this.clientOptions).then(uid => {
-                let config = isSafari()
-                    ? {}
-                    : {
-                        cameraId: this.clientOptions.cameraId,
-                        microphoneId: this.clientOptions.microphoneId
-                    };
+            this.clientInit(this.client, this.clientOptions).then(uid => {
+                this.clientUid = uid;
+                // this.streamInit(uid, this.clientOptions);
+            });
 
-                if (isSafari()) {
+            this.$root.$on('start_broadcasting', function() {
+                _this.localStream = _this.streamInit(_this.clientUid, _this.clientOptions);
 
-                } else {
-                    // eslint-disable-next-line
-                    AgoraRTC.getDevices(function(devices) {
-                        console.log(devices);
-                        this.devices = devices;
-                        devices.forEach(function(item) {
-                            console.log(item);
-                            // this.deviceId = item.deviceId;
+                _this.localStream.init(
+                    () => {
+                        _this.addStream(_this.localStream, true, _this);
+                        _this.client.publish(_this.localStream, err => {
+                            log("Publish local stream error: " + err);
                         });
-                    });
-                }
+                    },
+                    err => {
+                        log("getUserMedia failed", err);
+                    }
+                );
 
-                this.localStream = this.streamInit(uid, this.clientOptions, config);
+                _this.setDevice();
+            });
 
-                // Enable dual stream
-                if (this.clientOptions.attendeeMode !== "audience") {
-                    // MainId default to be localStream's ID
-                    this.mainId = uid;
-                    this.mainStream = this.localStream;
-                }
+            this.$root.$on('stop_broadcasting', function() {
+                _this.localStream && _this.localStream.close();
+                _this.client && _this.client.unpublish(_this.localStream);
 
-                // this.localStream.init(
-                //     () => {
-                //         if (this.clientOptions.attendeeMode !== "audience") {
-                //             this.addStream(this.localStream, true, this);
-                //             Client.publish(this.localStream, err => {
-                //                 log("Publish local stream error: " + err);
-                //             });
-                //         }
-                //     },
-                //     err => {
-                //         log("getUserMedia failed", err);
-                //     }
-                // );
+                _this.removeStream(_this.clientUid, _this);
 
-                // this.setDevice();
+                _this.$root.$emit('video_reset');
+                _this.$root.$emit('audio_reset');
+
+                _this.$root.$emit('stopped_broadcasting');
             });
         }
     }

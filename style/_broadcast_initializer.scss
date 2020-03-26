@@ -1,0 +1,29 @@
+#app-broadcast-initializer {
+
+}
+
+#app-broadcast-initializer-modal {
+    .media-list {
+        display: inline-block;
+        margin: 4px;
+        button {
+            text-align: center;
+            padding: 2px;
+            width: 140px;
+            height: 140px;
+            span {
+                padding: 1px 3px;
+                text-align: center;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                display: inherit;
+                width: 130px;
+            }
+            svg {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    }
+}
