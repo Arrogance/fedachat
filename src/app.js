@@ -28,7 +28,8 @@ const App = new Vue({
         users: [],
         userName: null,
         user: null,
-        mediaEnabled: false
+        mediaEnabled: false,
+        soundsEnabled: true
     },
     methods: {
         refreshUserConnected: function(users) {

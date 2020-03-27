@@ -4,7 +4,7 @@
             <b-row class="pr-2 pl-3">
                 <b-col cols="12" class="users-list">
                     <h5>Usuarios conectados:</h5>
-                    <b-badge variant="secondary" class="p-1 ml-1 mr-1" v-for="user in this.$root.users">
+                    <b-badge variant="secondary" class="p-1 ml-1 mr-1" v-for="user in this.$root.users" v-bind:key="user.uuid">
                         {{ user.userName }}
                     </b-badge>
                 </b-col>
@@ -72,6 +72,8 @@
 </template>
 
 <script>
+    import SoundsComponent from '../plugins/sound.js'
+
     export default {
         data() {
             return {
@@ -83,6 +85,10 @@
         },
         methods: {
             sendMessage: function() {
+                if (this.message === '') {
+                    return;
+                }
+
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
                     type: 'chat',
@@ -117,6 +123,8 @@
 
             this.$root.socket.on('message', (message) => {
                 this.messages.push(message);
+
+                SoundsComponent.playSound();
 
                 let messageDom = $('.chat-messages');
                 messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);

@@ -9,7 +9,8 @@ const PATHS = {
     server: path.resolve(__dirname, 'server'),
     style: path.resolve(__dirname, 'style'),
     build: path.resolve(__dirname, 'public'),
-    images: path.join(__dirname, 'images')
+    images: path.join(__dirname, 'assets', 'images'),
+    sounds: path.join(__dirname, 'assets', 'sounds')
 };
 
 module.exports = {
@@ -83,7 +84,8 @@ module.exports = {
     },
     plugins: [
         new CopyWebpackPlugin([
-            { from: PATHS.images, to: path.join(PATHS.build, 'images') }
+            { from: PATHS.images, to: path.join(PATHS.build, 'images') },
+            { from: PATHS.sounds, to: path.join(PATHS.build, 'sounds') }
         ]),
         new VueLoaderPlugin(),
         new MiniCssExtractPlugin()
