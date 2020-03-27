@@ -16,7 +16,10 @@ Vue.use(VueRouter);
 
 import HeaderComponent from './components/header.vue';
 import randomWords from 'random-words';
-const socket = io();
+
+import { SOCKET_ENDPOINT } from '../config';
+
+const socket = io(SOCKET_ENDPOINT);
 
 const App = new Vue({
     el: '#app',

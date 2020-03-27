@@ -42,11 +42,10 @@
                 this.audioDevices = [];
 
                 let _this = this;
-                if (navigator.mediaDevices !== undefined) {
-                    navigator.mediaDevices
-                        .getUserMedia({ audio: true, video: true })
-                        .then(function(mediaStream) {
-                            console.log(mediaStream);
+
+                if (navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(function() {
                             _this.$root.mediaEnabled = true;
                             AgoraRTC.getDevices(function(devices) {
                                 if (devices === undefined) {
@@ -68,10 +67,9 @@
 
                             _this.$refs['broadcast-initializer-modal'].show('#toggle-btn');
                         })
-                        .catch(function(err) {
-                            console.log(err);
-                        })
-                    ;
+                        .catch(function () {
+                            console.log("Something went wrong!");
+                        });
                 }
             },
             closeModal() {
