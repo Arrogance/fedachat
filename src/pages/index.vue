@@ -2,11 +2,11 @@
     <section id="index">
         <b-container fluid="">
             <b-row>
-                <b-col cols="8">
-                    <app-videos camera-id="default" microphone-id="default"></app-videos>
+                <b-col cols="8" class="left-column">
+                    <app-videos channel="fedachat"></app-videos>
                 </b-col>
 
-                <b-col cols="4">
+                <b-col cols="4" class="right-column">
                     <app-chat></app-chat>
                 </b-col>
             </b-row>

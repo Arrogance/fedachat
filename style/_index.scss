@@ -1,0 +1,10 @@
+#index {
+    .right-column {
+        padding: 5px 0 0;
+        background-color: $light;
+        border-left: 1px dashed darken($light, 8);
+        height: 100%;
+        position: fixed;
+        right: 0;
+    }
+}

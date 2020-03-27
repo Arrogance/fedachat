@@ -7,4 +7,8 @@ export default class User {
     addSocket(socket) {
         this.socket = socket;
     }
+
+    addStreamId(streamId) {
+        this.streamId = streamId;
+    }
 }

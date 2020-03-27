@@ -1,9 +1,9 @@
 <template>
     <section id="app-broadcast-initializer">
-        <b-button v-if="true === broadcasting && false === selfMuted" variant="outline-warning" v-on:click="enableSelfMute"><b-icon-mic-mute-fill></b-icon-mic-mute-fill></b-button>
+        <b-button v-if="true === broadcasting && false === selfMuted" variant="outline-warning" v-on:click="enableSelfMute"><b-icon-mic-fill></b-icon-mic-fill></b-button>
         <b-button v-else-if="true === broadcasting && true === selfMuted" variant="warning" v-on:click="disableSelfMute"><b-icon-mic-mute-fill></b-icon-mic-mute-fill></b-button>
 
-        <b-button v-if="false === broadcasting" variant="success" v-on:click="toggleModal"><b-icon-camera-video-fill></b-icon-camera-video-fill> Empezar a emitir</b-button>
+        <b-button v-if="false === broadcasting" variant="success" v-on:click="openModal"><b-icon-camera-video-fill></b-icon-camera-video-fill> Empezar a emitir</b-button>
         <b-button v-else variant="danger" v-on:click="stopBroadcasting">Detener emisión</b-button>
 
         <b-modal id="app-broadcast-initializer-modal" ref="broadcast-initializer-modal" title="Empezar a emitir..." hide-footer>
@@ -37,47 +37,48 @@
 
     export default {
         methods: {
-            toggleModal() {
-                // We pass the ID of the button that we want to return focus to
-                // when the modal has hidden
-                this.$refs['broadcast-initializer-modal'].toggle('#toggle-btn');
-
+            openModal() {
                 this.videoDevices = [];
                 this.audioDevices = [];
 
                 let _this = this;
                 if (navigator.mediaDevices !== undefined) {
                     navigator.mediaDevices
-                        .getUserMedia({ audio: true, video: true })
+                        .enumerateDevices({ audio: true, video: true })
                         .then(function(mediaStream) {
+                            console.log(mediaStream);
                             _this.$root.mediaEnabled = true;
+                            AgoraRTC.getDevices(function(devices) {
+                                if (devices === undefined) {
+                                    return;
+                                }
+
+                                devices.forEach(function(device) {
+                                    switch(device.kind) {
+                                        case 'audioinput':
+                                            _this.audioDevices.push(device);
+                                            break;
+
+                                        case 'videoinput':
+                                            _this.videoDevices.push(device);
+                                            break;
+                                    }
+                                });
+                            });
+
+                            _this.$refs['broadcast-initializer-modal'].show('#toggle-btn');
                         })
                         .catch(function(err) {
                             console.log(err);
                         })
                     ;
-
-                    let _this = this;
-                    AgoraRTC.getDevices(function(devices) {
-                        if (devices === undefined) {
-                            return;
-                        }
-
-                        devices.forEach(function(device) {
-                            switch(device.kind) {
-                                case 'audioinput':
-                                    _this.audioDevices.push(device);
-                                    break;
-
-                                case 'videoinput':
-                                    _this.videoDevices.push(device);
-                                    break;
-                            }
-                        });
-                    });
                 }
             },
+            closeModal() {
+                    this.$refs['broadcast-initializer-modal'].hide('#toggle-btn');
+            },
             setVideoDevice(device) {
+                console.log(device);
                 this.$root.$emit('camera_selected', device);
             },
             setAudioDevice(device) {
@@ -90,18 +91,19 @@
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
                     type: 'start_broadcasting',
-                    content: this.$root.user.userName +' ha comenzado a emitir'
+                    content: this.$root.user.userName +' ha comenzado a emitir.'
                 });
 
-                this.toggleModal();
+                this.closeModal();
             },
             stopBroadcasting() {
                 this.$root.$emit('stop_broadcasting');
+                this.selfMuted = false;
 
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
                     type: 'stop_broadcasting',
-                    content: this.$root.user.userName +' ha parado de emitir'
+                    content: this.$root.user.userName +' ha dejado de emitir.'
                 });
             },
             enableSelfMute() {

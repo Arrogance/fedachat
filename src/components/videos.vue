@@ -35,8 +35,6 @@
                     return ''
                 }
             },
-            cameraId: String,
-            microphoneId: String,
             channel: String,
             transcode: {
                 type: String,
@@ -66,7 +64,10 @@
                     token: AGORA_TOKEN
                 },
                 streamList: [],
-                devices: []
+                videoDevice: null,
+                audioDevice: null,
+                localStream: null,
+                videoStream: null,
             }
         },
         methods: {
@@ -74,13 +75,10 @@
                 return {
                     videoProfile: options.videoProfile.split(',')[0] || '480p_4',
                     videoProfileLow: options.videoProfileLow.split(',')[0] || '480p_4',
-                    cameraId: options.cameraId,
-                    microphoneId: options.microphoneId,
                     channel: options.channel || "test",
-                    transcode: options.transcode || "interop",
+                    transcode: options.transcode || "rtc",
                     attendeeMode: options.attendeeMode || "video",
                     baseMode: options.baseMode || "avc",
-                    displayMode: 0, // 0 Tile, 1 PIP, 2 screen share
                     uid: undefined, // In default it is dynamically generated
                     resolution: undefined,
                 }
@@ -89,6 +87,9 @@
                 return new Promise((resolve, reject) => {
                     client.init(options.key, () => {
                         let lowStreamParam = AGORA_RESOLUTION_ARR[options.videoProfileLow];
+
+                        client.enableDualStream();
+
                         client.join(
                             options.token,
                             options.channel,
@@ -142,13 +143,17 @@
                     return item.getId() === id;
                 });
 
-                if (redundant) {
-                    return;
+                if (false === redundant) {
+                    push ? _this.streamList.push(stream) : _this.streamList.unshift(stream);
+                    Renderer.customRender(_this.streamList);
                 }
 
-                push ? _this.streamList.push(stream) : _this.streamList.unshift(stream);
-                stream.resume();
-                Renderer.customRender(_this.streamList, _this.clientOptions.displayMode, _this.mainId);
+                _this.$root.users.forEach(function(user) {
+                    let element = document.querySelector('[data-user-stream-id="'+user.streamId+'"]');
+                    if (element) {
+                        element.textContent = user.userName;
+                    }
+                });
             },
             removeStream: (id, _this) => {
                 _this.streamList.map((item, index) => {
@@ -161,7 +166,7 @@
                     return 0;
                 });
 
-                Renderer.customRender(_this.streamList, _this.clientOptions.displayMode);
+                Renderer.customRender(_this.streamList);
             },
             subscribeStreamEvents: (client, _this) => {
                 client.on("stream-added", function(evt) {
@@ -209,14 +214,14 @@
                     let id = this.localStream.getId();
                     this.client.unpublish(this.localStream);
 
-                    // Reinit stream
                     let defaultConfig = {
                         streamID: id,
                         audio: true,
                         video: true,
                         screen: false,
-                        cameraId: this.$root.cameraId,
-                        microphoneId: this.$root.microphoneId
+                        mirror: false,
+                        cameraId: this.videoDevice.deviceId,
+                        microphoneId: this.audioDevice.deviceId
                     };
 
                     // eslint-disable-next-line
@@ -224,6 +229,8 @@
                     this.videoStream.setVideoProfile(
                         this.clientOptions.videoProfile
                     );
+
+                    console.log(this.videoStream.cameraId, this.videoDevice.deviceId);
 
                     // Init VIDEO
                     this.videoStream.init(
@@ -242,13 +249,11 @@
         mounted() {
             let _this = this;
 
-            Renderer.init("video-canvas", 9 / 16, 8 / 5);
+            Renderer.init("video-canvas");
 
             this.clientOptions = Object.assign(this.clientOptions, this.optionsInit({
                 videoProfile: this.videoProfile,
                 videoProfileLow: this.videoProfileLow,
-                cameraId: this.cameraId,
-                microphoneId: this.microphoneId,
                 channel: this.channel,
                 transcode: this.transcode,
                 baseMode: this.baseMode,
@@ -266,6 +271,9 @@
             });
 
             this.$root.$on('start_broadcasting', function() {
+                _this.clientOptions.cameraId = _this.videoDevice.deviceId;
+                _this.clientOptions.microphoneId = _this.audioDevice.deviceId;
+
                 _this.localStream = _this.streamInit(_this.clientUid, _this.clientOptions);
 
                 _this.localStream.init(
@@ -280,7 +288,9 @@
                     }
                 );
 
-                _this.setDevice();
+                _this.setDevice().then(function() {
+                    _this.$root.$emit('user_started_broadcasting', _this.clientUid);
+                });
             });
 
             this.$root.$on('stop_broadcasting', function() {
@@ -297,8 +307,35 @@
 
             this.$root.$on('self_muted', function() {
                 _this.localStream.isAudioOn()
-                    ? _this.localStream.disableAudio()
-                    : _this.localStream.enableAudio();
+                    ? _this.localStream.muteAudio()
+                    : _this.localStream.unmuteAudio();
+            });
+
+            this.$root.$on('users', function() {
+                _this.$root.users.forEach(function(user) {
+                    let element = document.querySelector('[data-user-stream-id="'+user.streamId+'"]');
+                    if (element) {
+                        element.textContent = user.userName;
+                    }
+                });
+            });
+
+            this.$root.$on('camera_selected', function(device) {
+                _this.videoDevice = device;
+            });
+
+            this.$root.$on('audio_selected', function(device) {
+                _this.audioDevice = device;
+            });
+
+            let clickListener = document.addEventListener('click', function(event) {
+                if (_this.streamList) {
+                    _this.streamList.forEach(function(stream) {
+                        stream.resume()
+                    });
+
+                    event.target.removeEventListener('click', clickListener);
+                }
             });
         }
     }

@@ -55,12 +55,14 @@ io.on('connection', socket => {
     socket.on('user_modified', function(event) {
         users = users.map(function(value) {
             if (value.uuid === event.uuid) {
-                console.log('User is the same', event.userName);
                 value.userName = event.userName;
+                value.streamId = event.streamId;
             }
 
             return value;
         });
+
+        console.log('User modified', users);
 
         io.emit('users', users);
     });

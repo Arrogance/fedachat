@@ -28,8 +28,6 @@ const App = new Vue({
         users: [],
         userName: null,
         user: null,
-        cameraId: null,
-        microphoneId: null,
         mediaEnabled: false
     },
     methods: {
@@ -54,32 +52,26 @@ const App = new Vue({
                 }
             });
 
-            this.userName = userName.join('_');
+            this.userName = userName.join('_').substring(0, 22);
         }
 
         this.socket.emit('user_connected', {
-            userName: _this.userName
-        });
-
-        this.$on('camera_selected', function(device) {
-            this.cameraId = device.deviceId;
-        });
-
-        this.$on('audio_selected', function(device) {
-            this.microphoneId = device.deviceId;
+            userName: _this.userName.substring(0, 22)
         });
 
         this.$on('username_changed', function() {
-            this.user.userName = this.userName;
+            this.user.userName = this.user.userName.substring(0, 22);
+            this.socket.emit('user_modified', this.user);
+        });
+
+        this.$on('user_started_broadcasting', function(streamId) {
+            this.user.streamId = streamId;
             this.socket.emit('user_modified', this.user);
         });
 
         this.socket.on('user_details', function(user) {
             _this.userName = user.userName;
-            _this.user = {
-                userName: user.userName,
-                uuid: user.uuid
-            };
+            _this.user = user;
         });
 
         this.socket.on('user_disconnected', function(user) {
@@ -87,10 +79,11 @@ const App = new Vue({
         });
 
         this.socket.on('users', this.refreshUserConnected);
+        this.socket.on('users', function() {
+            _this.$emit('users', _this.users);
+        });
 
         this.$emit('user_connected');
     },
     router: Router
 });
-
-console.log(App);

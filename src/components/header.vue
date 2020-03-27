@@ -19,7 +19,7 @@
                         <app-broadcast-initializer></app-broadcast-initializer>
                     </b-nav-item>
                     <b-nav-item>
-                        <b-button v-if="this.$root.userName" v-text="this.$root.userName" @click="toggleModal"></b-button>
+                        <b-button v-if="this.$root.user" v-text="this.$root.user.userName" @click="toggleModal"></b-button>
                         <b-button v-else @click="toggleModal">Elegir un nick...</b-button>
                     </b-nav-item>
                 </b-navbar-nav>
@@ -31,7 +31,7 @@
                 <b-form id="username-form" v-on:submit.prevent="">
                     <b-form-group id="username-group">
                         <b-form >
-                            <b-form-input id="username" v-model="userName" v-on:keydown.enter.prevent='onUsernameSubmit' type="text" required></b-form-input>
+                            <b-form-input id="username" v-model="userName" v-on:keydown.enter.prevent='onUsernameSubmit' type="text" required max="22"></b-form-input>
                         </b-form>
                     </b-form-group>
 
@@ -60,8 +60,8 @@
                     return;
                 }
 
-                let oldUsername = this.$root.userName;
-                this.$root.userName = this.userName;
+                let oldUsername = this.$root.user.userName;
+                this.$root.user.userName = this.userName;
                 this.toggleModal();
 
                 this.$root.$emit('username_changed', {
@@ -75,7 +75,9 @@
             }
         },
         mounted() {
-            // this.username = this.$root.username;
+            if (this.$root.user) {
+                this.userName = this.$root.user.userName;
+            }
         }
     }
 </script>

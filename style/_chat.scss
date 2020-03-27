@@ -1,87 +1,38 @@
-.chat_window {
-    position: fixed;
+#app-chat {
+    position: absolute;
+    height: 100%;
     width: 100%;
-    bottom: 0;
-    border-radius: 10px;
-    overflow: hidden;
-}
+    top: 0;
 
-.messages {
-    position: relative;
-    list-style: none;
-    padding: 20px 10px 0 10px;
-    margin: 0;
-    max-height: 95%;
-    overflow: scroll;
-    overflow-x: hidden;
-    .message {
-        clear: both;
+    .users-list {
+        border-bottom: 1px dashed darken($light, 8);
+        padding: 8px 10px 12px;
+    }
+
+    .chat-messages {
+        position: absolute;
         overflow: hidden;
-        margin-bottom: 20px;
-        transition: all 0.5s linear;
-        opacity: 0;
-        &.left {
-            .avatar {
-                background-color: #f5886e;
-                float: left;
-            }
+        overflow-y: scroll;
+        width: 100%;
+    }
 
-            .text_wrapper {
-                background-color: #ffe6cb;
-                margin-left: 20px;
+    .chat-form {
+        position: absolute;
+        bottom: 10px;
+        height: 115px;
+        background-color: lighten($dark, 70);
+        width: 100%;
+        border-top: 1px dashed darken($light, 8);
+
+        .chat-input {
+            width: 100%;
+            input {
+                width: 100%;
             }
         }
+
+        .chat-input-send {
+            float: right;
+        }
     }
-}
-
-.bottom_wrapper {
-    width: 100%;
-    background-color: #fff;
-    padding: 20px 20px;
-    bottom: 0;
-}
-.bottom_wrapper .message_input_wrapper {
-    display: inline-block;
-    height: 50px;
-    border-radius: 25px;
-    border: 1px solid #bcbdc0;
-    width: calc(100% - 160px);
-    position: relative;
-    padding: 0 20px;
-}
-.bottom_wrapper .message_input_wrapper .message_input {
-    border: none;
-    height: 100%;
-    box-sizing: border-box;
-    width: calc(100% - 40px);
-    position: absolute;
-    outline-width: 0;
-    color: gray;
-}
-.bottom_wrapper .send_message {
-    width: 140px;
-    height: 50px;
-    display: inline-block;
-    border-radius: 50px;
-    background-color: #a3d063;
-    border: 2px solid #a3d063;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.2s linear;
-    text-align: center;
-    float: right;
-}
-.bottom_wrapper .send_message:hover {
-    color: #a3d063;
-    background-color: #fff;
-}
-.bottom_wrapper .send_message .text {
-    font-size: 18px;
-    font-weight: 300;
-    display: inline-block;
-    line-height: 48px;
-}
-
-.message_template {
-    display: none;
 }
