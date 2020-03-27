@@ -88,8 +88,6 @@
                     client.init(options.key, () => {
                         let lowStreamParam = AGORA_RESOLUTION_ARR[options.videoProfileLow];
 
-                        client.enableDualStream();
-
                         client.join(
                             options.token,
                             options.channel,
@@ -102,6 +100,7 @@
                                     bitrate: lowStreamParam[3]
                                 });
                                 // Create localstream
+                                client.enableDualStream();
                                 resolve(uid);
                             },
                             err => {
@@ -111,7 +110,7 @@
                     });
                 });
             },
-            streamInit: (uid, options, config) => {
+            streamInit: (uid, options) => {
                 let defaultConfig = {
                     streamID: uid,
                     audio: true,
@@ -132,10 +131,7 @@
                         break;
                 }
 
-                let stream = AgoraRTC.createStream(Object.assign(defaultConfig, config));
-                stream.setVideoProfile(options.videoProfile);
-
-                return stream;
+                return AgoraRTC.createStream(Object.assign(defaultConfig, options));
             },
             addStream: (stream, push = false, _this) => {
                 let id = stream.getId();
@@ -211,30 +207,18 @@
             },
             setDevice: function() {
                 return new Promise((resolve, reject) => {
-                    let id = this.localStream.getId();
-                    this.client.unpublish(this.localStream);
+                    let options = this.clientOptions;
+                    options.cameraId = this.videoDevice.deviceId;
+                    options.microphoneId = this.audioDevice.deviceId;
 
-                    let defaultConfig = {
-                        streamID: id,
-                        audio: true,
-                        video: true,
-                        screen: false,
-                        mirror: false,
-                        cameraId: this.videoDevice.deviceId,
-                        microphoneId: this.audioDevice.deviceId
-                    };
-
-                    // eslint-disable-next-line
-                    this.videoStream = AgoraRTC.createStream(defaultConfig);
+                    this.videoStream = this.streamInit(this.clientUid, options);
                     this.videoStream.setVideoProfile(
                         this.clientOptions.videoProfile
                     );
 
-                    console.log(this.videoStream.cameraId, this.videoDevice.deviceId);
-
-                    // Init VIDEO
                     this.videoStream.init(
                         () => {
+                            this.addStream(this.videoStream, true, this);
                             this.client.publish(this.videoStream);
                             resolve();
                         },
@@ -271,31 +255,14 @@
             });
 
             this.$root.$on('start_broadcasting', function() {
-                _this.clientOptions.cameraId = _this.videoDevice.deviceId;
-                _this.clientOptions.microphoneId = _this.audioDevice.deviceId;
-
-                _this.localStream = _this.streamInit(_this.clientUid, _this.clientOptions);
-
-                _this.localStream.init(
-                    () => {
-                        _this.addStream(_this.localStream, true, _this);
-                        _this.client.publish(_this.localStream, err => {
-                            log("Publish local stream error: " + err);
-                        });
-                    },
-                    err => {
-                        log("getUserMedia failed", err);
-                    }
-                );
-
                 _this.setDevice().then(function() {
                     _this.$root.$emit('user_started_broadcasting', _this.clientUid);
                 });
             });
 
             this.$root.$on('stop_broadcasting', function() {
-                _this.localStream && _this.localStream.close();
-                _this.client && _this.client.unpublish(_this.localStream);
+                _this.videoStream && _this.videoStream.close();
+                _this.client && _this.client.unpublish(_this.videoStream);
 
                 _this.removeStream(_this.clientUid, _this);
 
@@ -306,9 +273,9 @@
             });
 
             this.$root.$on('self_muted', function() {
-                _this.localStream.isAudioOn()
-                    ? _this.localStream.muteAudio()
-                    : _this.localStream.unmuteAudio();
+                _this.videoStream.isAudioOn()
+                    ? _this.videoStream.muteAudio()
+                    : _this.videoStream.unmuteAudio();
             });
 
             this.$root.$on('users', function() {

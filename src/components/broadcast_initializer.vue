@@ -44,7 +44,7 @@
                 let _this = this;
                 if (navigator.mediaDevices !== undefined) {
                     navigator.mediaDevices
-                        .enumerateDevices({ audio: true, video: true })
+                        .getUserMedia({ audio: true, video: true })
                         .then(function(mediaStream) {
                             console.log(mediaStream);
                             _this.$root.mediaEnabled = true;

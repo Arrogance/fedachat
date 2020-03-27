@@ -6,14 +6,6 @@
                     <h1>FedaChat</h1>
                 </b-navbar-brand>
 
-                <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-
-                <b-collapse id="nav-collapse" is-nav>
-                    <b-navbar-nav>
-                        <!--                    <b-nav-item href="#">Link</b-nav-item>-->
-                    </b-navbar-nav>
-                </b-collapse>
-
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item>
                         <app-broadcast-initializer></app-broadcast-initializer>
