@@ -124,7 +124,7 @@
             this.$root.socket.on('message', (message) => {
                 this.messages.push(message);
 
-                SoundsComponent.playSound();
+                SoundsComponent.playBeepSound();
 
                 let messageDom = $('.chat-messages');
                 messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);

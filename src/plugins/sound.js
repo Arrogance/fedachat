@@ -1,9 +1,10 @@
 import { Howl, Howler } from 'howler';
 
 export default {
-    playSound: function(file) {
+    playBeepSound: function() {
         let sound = new Howl({
-            src: ['/sounds/beep.wav']
+            src: ['/sounds/beep.wav'],
+            volume: 0.5,
         });
 
         sound.play();
