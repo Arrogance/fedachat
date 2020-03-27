@@ -3,4 +3,8 @@ export default class Message {
         this.type = type;
         this.content = content;
     }
+
+    setUser(user) {
+        this.user = user;
+    }
 }

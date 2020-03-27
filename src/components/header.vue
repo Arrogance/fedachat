@@ -2,7 +2,9 @@
     <section id="navbar">
         <b-navbar toggleable="lg" type="dark" variant="dark">
             <b-container>
-                <b-navbar-brand href="#">FedaChat</b-navbar-brand>
+                <b-navbar-brand href="#">
+                    <h1>FedaChat</h1>
+                </b-navbar-brand>
 
                 <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -17,8 +19,8 @@
                         <app-broadcast-initializer></app-broadcast-initializer>
                     </b-nav-item>
                     <b-nav-item>
-                        <span v-if="this.$root.userName" v-text="this.$root.userName" @click="toggleModal"></span>
-                        <span v-else @click="toggleModal">Elegir un nick...</span>
+                        <b-button v-if="this.$root.userName" v-text="this.$root.userName" @click="toggleModal"></b-button>
+                        <b-button v-else @click="toggleModal">Elegir un nick...</b-button>
                     </b-nav-item>
                 </b-navbar-nav>
             </b-container>

@@ -16,20 +16,6 @@ Vue.use(VueRouter);
 
 import HeaderComponent from './components/header.vue';
 import randomWords from 'random-words';
-
-let userName = randomWords({
-    exactly: 3,
-    wordsPerString: 1,
-    formatter: (word, index) => {
-        return index === 0
-            ? word
-                  .slice(0, 1)
-                  .toUpperCase()
-                  .concat(word.slice(1))
-            : word;
-    }
-});
-
 const socket = io();
 
 const App = new Vue({
@@ -40,7 +26,7 @@ const App = new Vue({
     data: {
         socket: socket,
         users: [],
-        userName: userName.join('_'),
+        userName: null,
         user: null,
         cameraId: null,
         microphoneId: null,
@@ -54,7 +40,26 @@ const App = new Vue({
     mounted() {
         let _this = this;
 
-        socket.on('users', this.refreshUserConnected);
+        if (this.userName === null) {
+            let userName = randomWords({
+                exactly: 3,
+                wordsPerString: 1,
+                formatter: (word, index) => {
+                    return index === 0
+                        ? word
+                              .slice(0, 1)
+                              .toUpperCase()
+                              .concat(word.slice(1))
+                        : word;
+                }
+            });
+
+            this.userName = userName.join('_');
+        }
+
+        this.socket.emit('user_connected', {
+            userName: _this.userName
+        });
 
         this.$on('camera_selected', function(device) {
             this.cameraId = device.deviceId;
@@ -64,15 +69,9 @@ const App = new Vue({
             this.microphoneId = device.deviceId;
         });
 
-        this.$on('username_changed', function(event) {
-            this.$root.socket.emit('user_disconnected', event.oldUsername);
-            this.$root.socket.emit('user_connected', {
-                userName: this.userName
-            });
-        });
-
-        this.socket.emit('user_connected', {
-            userName: _this.userName
+        this.$on('username_changed', function() {
+            this.user.userName = this.userName;
+            this.socket.emit('user_modified', this.user);
         });
 
         this.socket.on('user_details', function(user) {
@@ -87,7 +86,11 @@ const App = new Vue({
             _this.$emit('user_disconnected', user);
         });
 
+        this.socket.on('users', this.refreshUserConnected);
+
         this.$emit('user_connected');
     },
     router: Router
 });
+
+console.log(App);

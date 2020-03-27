@@ -83,10 +83,22 @@
                 this.$root.$emit('start_broadcasting');
                 this.broadcasting = true;
 
+                this.$root.socket.emit('message', {
+                    user: this.$root.user,
+                    type: 'start_broadcasting',
+                    content: this.$root.user.userName +' ha comenzado a emitir'
+                });
+
                 this.toggleModal();
             },
             stopBroadcasting() {
                 this.$root.$emit('stop_broadcasting');
+
+                this.$root.socket.emit('message', {
+                    user: this.$root.user,
+                    type: 'stop_broadcasting',
+                    content: this.$root.user.userName +' ha parado de emitir'
+                });
             }
         },
         data() {

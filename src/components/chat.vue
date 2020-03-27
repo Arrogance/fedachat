@@ -1,17 +1,52 @@
 <template>
     <section id="app-chat">
         <b-container>
-            <b-form v-if="this.$root.userName" v-on:submit.prevent="sendMessage">
+            <b-form v-if="this.$root.user" v-on:submit.prevent="sendMessage">
                 <b-row>
                     <b-col cols="10" class="p-0">
-                        <ul class="messages">
-                            <li v-for="m in messages" class="message left appeared">
-                                <div class="text_wrapper">
-                                    <div class="avatar">{{ m.userName }}</div>
-                                    <div class="text" v-text="m.content"></div>
-                                </div>
-                            </li>
-                        </ul>
+                        <div v-for="message in messages">
+                            <div v-if="message.type === 'connection'" :class="message.type">
+                                <span>
+                                    <b-icon-forward-fill></b-icon-forward-fill>
+                                    {{ message.content }}
+                                </span>
+                            </div>
+                            <div v-else-if="message.type === 'disconnection'" :class="message.type">
+                                <span>
+                                    <b-icon-forward flip-h></b-icon-forward>
+                                    {{ message.content }}
+                                </span>
+                            </div>
+                            <div v-else-if="message.type === 'username_changed'" :class="message.type">
+                                <span>
+                                    <b-icon-people flip-h></b-icon-people>
+                                    {{ message.content }}
+                                </span>
+                            </div>
+                            <div v-else-if="message.type === 'chat'" :class="message.type">
+                                <span>
+                                    {{ message.user.userName }}:
+                                </span>
+                                <span>
+                                    {{ message.content }}
+                                </span>
+                            </div>
+                            <div v-else-if="message.type === 'start_broadcasting'" :class="message.type">
+                                <span>
+                                    <b-icon-camera-video-fill></b-icon-camera-video-fill>
+                                    {{ message.content }}
+                                </span>
+                            </div>
+                            <div v-else-if="message.type === 'stop_broadcasting'" :class="message.type">
+                                <span>
+                                    <b-icon-camera-video flip-h></b-icon-camera-video>
+                                    {{ message.content }}
+                                </span>
+                            </div>
+                            <div v-else :class="message.type">
+                                <span>{{ message.content }}</span>
+                            </div>
+                        </div>
                     </b-col>
 
                     <b-col cols="2">
@@ -52,7 +87,7 @@
         methods: {
             sendMessage: function() {
                 this.$root.socket.emit('message', {
-                    userName: this.$root.userName,
+                    user: this.$root.user,
                     type: 'chat',
                     content: this.message
                 });

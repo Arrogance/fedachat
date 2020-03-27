@@ -21,44 +21,70 @@ io.on('connection', socket => {
     socket.emit('users', users);
     socket.emit('messages', messages);
 
-    socket.on('message', function(msg) {
-        let message = new MessageModel(msg.type, msg.content);
+    socket.on('message', function(event) {
+        let message = new MessageModel(event.type, event.content);
+
+        if (event.user) {
+            users.forEach(function(value) {
+                console.log(value.uuid, event.user.uuid);
+                if (value.uuid === event.user.uuid) {
+                    console.log('User found', value);
+                    message.setUser(value);
+                }
+            });
+        }
 
         messages.push(message);
         io.emit('message', message);
+
+        console.log('New message', event);
     });
 
-    socket.on('user_connected', function(msg) {
-        let user = new UserModel(uuidv4(), msg.userName);
+    socket.on('user_connected', function(event) {
+        let user = new UserModel(uuidv4(), event.userName);
         user.addSocket(socket.id);
 
         users.push(user);
         io.emit('users', users);
-        io.emit('user_details', user);
+        socket.emit('user_details', user);
     });
 
-    socket.on('user_disconnected', function(msg) {
+    socket.on('user_disconnected', function(event) {
         users = users.filter(function(value) {
-            return value.userName !== msg;
+            if (value.socket === socket.id) {
+                io.emit('user_disconnected', value);
+            }
+
+            return value.userName !== event;
+        });
+
+        io.emit('users', users);
+    });
+
+    socket.on('user_modified', function(event) {
+        users = users.map(function(value) {
+            if (value.uuid === event.uuid) {
+                console.log('User is the same', event.userName);
+                value.userName = event.userName;
+            }
+
+            return value;
         });
 
         io.emit('users', users);
     });
 
     socket.on('disconnect', function() {
-        let user;
-
         users = users.filter(function(value) {
             if (value.socket === socket.id) {
-                user = value;
+                io.emit('user_disconnected', value);
             }
 
             return value.socket !== socket.id;
         });
 
-        if (user) {
-            io.emit('user_disconnected', user);
-        }
+        io.emit('users', users);
+        console.log('Closed Connection', socket.id);
     });
 });
 
