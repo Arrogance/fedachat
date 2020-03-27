@@ -16,10 +16,7 @@ let users = [];
 let messages = [];
 
 io.on('connection', socket => {
-    console.log('Connected Users', users);
-
     socket.emit('users', users);
-    socket.emit('messages', messages);
 
     socket.on('message', function(event) {
         let message = new MessageModel(event.type, event.content);
@@ -36,8 +33,6 @@ io.on('connection', socket => {
 
         messages.push(message);
         io.emit('message', message);
-
-        console.log('New message', event);
     });
 
     socket.on('user_connected', function(event) {
@@ -45,20 +40,16 @@ io.on('connection', socket => {
         user.addSocket(socket.id);
 
         users.push(user);
+
+        let message = {
+            user: user,
+            type: 'connection'
+        };
+
+        io.emit('message', message);
         io.emit('users', users);
+
         socket.emit('user_details', user);
-    });
-
-    socket.on('user_disconnected', function(event) {
-        users = users.filter(function(value) {
-            if (value.socket === socket.id) {
-                io.emit('user_disconnected', value);
-            }
-
-            return value.userName !== event;
-        });
-
-        io.emit('users', users);
     });
 
     socket.on('user_modified', function(event) {
@@ -77,6 +68,12 @@ io.on('connection', socket => {
     socket.on('disconnect', function() {
         users = users.filter(function(value) {
             if (value.socket === socket.id) {
+                let message = {
+                    user: value,
+                    type: 'disconnection'
+                };
+
+                io.emit('message', message);
                 io.emit('user_disconnected', value);
             }
 
@@ -84,7 +81,6 @@ io.on('connection', socket => {
         });
 
         io.emit('users', users);
-        console.log('Closed Connection', socket.id);
     });
 });
 

@@ -3,7 +3,7 @@
         <b-container fluid="">
             <b-row>
                 <b-col cols="8">
-                    <app-videos camera-id="default" microphone-id="default" attendee-mode="video"></app-videos>
+                    <app-videos camera-id="default" microphone-id="default"></app-videos>
                 </b-col>
 
                 <b-col cols="4">

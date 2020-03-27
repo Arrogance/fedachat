@@ -1,5 +1,8 @@
 <template>
     <section id="app-broadcast-initializer">
+        <b-button v-if="true === broadcasting && false === selfMuted" variant="outline-warning" v-on:click="enableSelfMute"><b-icon-mic-mute-fill></b-icon-mic-mute-fill></b-button>
+        <b-button v-else-if="true === broadcasting && true === selfMuted" variant="warning" v-on:click="disableSelfMute"><b-icon-mic-mute-fill></b-icon-mic-mute-fill></b-button>
+
         <b-button v-if="false === broadcasting" variant="success" v-on:click="toggleModal"><b-icon-camera-video-fill></b-icon-camera-video-fill> Empezar a emitir</b-button>
         <b-button v-else variant="danger" v-on:click="stopBroadcasting">Detener emisión</b-button>
 
@@ -42,11 +45,12 @@
                 this.videoDevices = [];
                 this.audioDevices = [];
 
+                let _this = this;
                 if (navigator.mediaDevices !== undefined) {
                     navigator.mediaDevices
                         .getUserMedia({ audio: true, video: true })
                         .then(function(mediaStream) {
-                            this.$root.mediaEnabled = true;
+                            _this.$root.mediaEnabled = true;
                         })
                         .catch(function(err) {
                             console.log(err);
@@ -99,13 +103,24 @@
                     type: 'stop_broadcasting',
                     content: this.$root.user.userName +' ha parado de emitir'
                 });
+            },
+            enableSelfMute() {
+                this.selfMuted = true;
+
+                this.$root.$emit('self_muted');
+            },
+            disableSelfMute() {
+                this.selfMuted = false;
+
+                this.$root.$emit('self_muted');
             }
         },
         data() {
             return {
                 videoDevices: [],
                 audioDevices: [],
-                broadcasting: false
+                broadcasting: false,
+                selfMuted: false
             }
         },
         mounted() {

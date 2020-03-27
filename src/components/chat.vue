@@ -8,13 +8,13 @@
                             <div v-if="message.type === 'connection'" :class="message.type">
                                 <span>
                                     <b-icon-forward-fill></b-icon-forward-fill>
-                                    {{ message.content }}
+                                    {{ message.user.userName }} se ha conectado.
                                 </span>
                             </div>
                             <div v-else-if="message.type === 'disconnection'" :class="message.type">
                                 <span>
                                     <b-icon-forward flip-h></b-icon-forward>
-                                    {{ message.content }}
+                                    {{ message.user.userName }} se ha desconectado.
                                 </span>
                             </div>
                             <div v-else-if="message.type === 'username_changed'" :class="message.type">
@@ -94,22 +94,6 @@
 
                 this.message = '';
             },
-            userConnectedEvent: function() {
-                let message = this.$root.userName +' se ha conectado.';
-
-                this.$root.socket.emit('message', {
-                    type: 'connection',
-                    content: message
-                });
-            },
-            userDisconnectedEvent: function(user) {
-                let message = user.userName +' se ha desconectado.';
-
-                this.$root.socket.emit('message', {
-                    type: 'disconnection',
-                    content: message
-                });
-            },
             userNameModified: function(event) {
                 let message = event.oldUsername +' ahora se llama '+this.$root.userName +'.';
 
@@ -137,8 +121,6 @@
                 messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
             });
 
-            this.$root.$on('user_connected', this.userConnectedEvent);
-            this.$root.$on('user_disconnected', this.userDisconnectedEvent);
             this.$root.$on('username_changed', this.userNameModified);
         }
     }

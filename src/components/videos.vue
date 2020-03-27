@@ -94,8 +94,6 @@
                             options.channel,
                             options.uid,
                             uid => {
-                                log(uid, "brown", `User ${uid} join channel successfully`);
-                                log(uid, "brown", new Date().toLocaleTimeString());
                                 client.setLowStreamParameter({
                                     width: lowStreamParam[0],
                                     height: lowStreamParam[1],
@@ -138,16 +136,6 @@
 
                 return stream;
             },
-            enableDualStream: (client) => {
-                client.enableDualStream(
-                    function() {
-                        log("Enable dual stream success!");
-                    },
-                    function(e) {
-                        log(e);
-                    }
-                );
-            },
             addStream: (stream, push = false, _this) => {
                 let id = stream.getId();
                 let redundant = _this.streamList.some(item => {
@@ -178,23 +166,13 @@
             subscribeStreamEvents: (client, _this) => {
                 client.on("stream-added", function(evt) {
                     let stream = evt.stream;
-                    let mainStream;
                     let id = stream.getId();
 
                     if (id === AGORA_SHARE_ID) {
                         _this.clientOptions.displayMode = 2;
                         _this.mainId = id;
-                        mainStream = stream;
                     }
 
-                    if (id !== _this.mainId) {
-                        if (_this.clientOptions.displayMode === 2) {
-                            client.setRemoteVideoStreamType(stream, 1);
-                        } else {
-                            mainStream && client.setRemoteVideoStreamType(mainStream, 1);
-                            mainStream = stream;
-                        }
-                    }
                     client.subscribe(stream, function(err) {
                         log("Subscribe stream failed", err);
                     });
@@ -211,15 +189,6 @@
                         _this.clientOptions.displayMode = 0;
                     }
 
-                    if (id === _this.mainId) {
-                        // // if (null !== _this.localStream) {
-                        //     let next = _this.clientOptions.displayMode === 2 ? AGORA_SHARE_ID : _this.localStream.getId();
-                        //     _this.setHighStream(_this.mainId, next, _this);
-                        //     _this.mainId = next;
-                        //     _this.mainStream = _this.getStreamById(_this.mainId, _this);
-                        // // }
-                    }
-
                     _this.removeStream(evt.uid, _this);
                 });
 
@@ -231,16 +200,6 @@
 
                 client.on("stream-removed", function(evt) {
                     let stream = evt.stream;
-                    let id = stream.getId();
-
-                    if (id === _this.mainId) {
-                        // if (null !== _this.localStream) {
-                        //     let next = _this.clientOptions.displayMode === 2 ? AGORA_SHARE_ID : _this.localStream.getId();
-                        //     _this.setHighStream(_this.mainId, next, _this);
-                        //     _this.mainId = next;
-                        //     _this.mainStream = _this.getStreamById(_this.mainId, _this);
-                        // }
-                    }
 
                     _this.removeStream(stream.getId(), _this);
                 });
@@ -300,7 +259,6 @@
                 mode: this.clientOptions.transcode
             });
 
-            this.enableDualStream(this.client);
             this.subscribeStreamEvents(this.client, this);
 
             this.clientInit(this.client, this.clientOptions).then(uid => {
@@ -335,6 +293,12 @@
                 _this.$root.$emit('audio_reset');
 
                 _this.$root.$emit('stopped_broadcasting');
+            });
+
+            this.$root.$on('self_muted', function() {
+                _this.localStream.isAudioOn()
+                    ? _this.localStream.disableAudio()
+                    : _this.localStream.enableAudio();
             });
         }
     }
