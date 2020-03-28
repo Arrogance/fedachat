@@ -4,6 +4,12 @@
     width: 100%;
     top: 0;
 
+    @media (min-width: 768px) {  }
+
+    @media (min-width: 992px) {  }
+
+    @media (min-width: 1200px) { }
+
     .users-list {
         border-bottom: 1px dashed darken($light, 8);
         padding: 8px 10px 12px;

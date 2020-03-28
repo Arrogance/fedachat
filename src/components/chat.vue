@@ -16,39 +16,35 @@
                         <div v-if="message.type === 'connection'" :class="message.type">
                             <span>
                                 <b-icon-forward-fill></b-icon-forward-fill>
-                                {{ message.user.userName }} se ha conectado.
+                                <strong>{{ message.user.userName }}</strong> se ha conectado.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'disconnection'" :class="message.type">
                             <span>
                                 <b-icon-forward flip-h></b-icon-forward>
-                                {{ message.user.userName }} se ha desconectado.
+                                <strong>{{ message.user.userName }}</strong> se ha desconectado.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'username_changed'" :class="message.type">
                             <span>
                                 <b-icon-people flip-h></b-icon-people>
-                                {{ message.content }}
+                                <strong>{{ message.user.userName }}</strong> ahora se llama <strong>{{ message.content }}</strong>.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'chat'" :class="message.type">
-                            <span>
-                                {{ message.user.userName }}:
-                            </span>
-                            <span>
-                                {{ message.content }}
-                            </span>
+                            <strong>{{ message.user.userName }}:</strong>
+                            <span>{{ message.content }}</span>
                         </div>
                         <div v-else-if="message.type === 'start_broadcasting'" :class="message.type">
                             <span>
                                 <b-icon-camera-video-fill></b-icon-camera-video-fill>
-                                {{ message.user.userName }} ha comenzado a emitir.
+                               <strong>{{ message.user.userName }}</strong> ha comenzado a emitir.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'stop_broadcasting'" :class="message.type">
                             <span>
                                 <b-icon-camera-video flip-h></b-icon-camera-video>
-                                {{ message.user.userName }} ha dejado de emitir.
+                                <strong>{{ message.user.userName }}</strong> ha dejado de emitir.
                             </span>
                         </div>
                         <div v-else :class="message.type">
@@ -98,11 +94,10 @@
                 this.message = '';
             },
             userNameModified: function(event) {
-                let message = event.oldUsername +' ahora se llama '+this.$root.user.userName +'.';
-
                 this.$root.socket.emit('message', {
+                    user: this.$root.user,
                     type: 'username_changed',
-                    content: message
+                    content: this.$root.user.userName
                 });
             },
             updateChatHeight: function() {
@@ -135,6 +130,11 @@
 
             this.$root.$on('username_changed', this.userNameModified);
             this.updateChatHeight();
+
+            let _this = this;
+            $(window).resize(function() {
+                _this.updateChatHeight();
+            });
         }
     }
 </script>

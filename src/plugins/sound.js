@@ -7,6 +7,6 @@ export default {
             volume: 0.2
         });
 
-        // sound.play();
+        sound.play();
     }
 };

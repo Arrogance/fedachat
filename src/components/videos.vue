@@ -1,8 +1,8 @@
 <template>
-    <section id="videos">
+    <section id="app-videos">
         <b-container fluid="">
-            <b-row>
-                <div id="video-canvas"></div>
+            <b-row class="mt-4">
+                <app-stream v-for="stream in streamList" v-bind:stream-source="stream" v-bind:key="stream.getId()"></app-stream>
             </b-row>
         </b-container>
     </section>
@@ -10,7 +10,6 @@
 
 <script>
     import AgoraRTC from 'agora-rtc-sdk';
-    import Renderer from '../plugins/render'
     import {
         AGORA_SHARE_ID,
         AGORA_RESOLUTION_ARR,
@@ -21,6 +20,8 @@
 
     AgoraRTC.Logger.disableLogUpload();
     AgoraRTC.Logger.setLogLevel(AgoraRTC.Logger.WARNING);
+
+    import StreamComponent from './stream.vue';
 
     export default {
         props: {
@@ -37,24 +38,9 @@
                 }
             },
             channel: String,
-            transcode: {
-                type: String,
-                default() {
-                    return 'interop'
-                }
-            },
-            attendeeMode: {
-                type: String,
-                default() {
-                    return 'video'
-                }
-            },
-            baseMode: {
-                type: String,
-                default() {
-                    return 'avc'
-                }
-            }
+        },
+        components: {
+            'app-stream': StreamComponent
         },
         data() {
             return {
@@ -142,28 +128,17 @@
 
                 if (false === redundant) {
                     push ? _this.streamList.push(stream) : _this.streamList.unshift(stream);
-                    Renderer.customRender(_this.streamList);
                 }
-
-                _this.$root.users.forEach(function(user) {
-                    let element = document.querySelector('[data-user-stream-id="'+user.streamId+'"]');
-                    if (element) {
-                        element.textContent = user.userName;
-                    }
-                });
             },
             removeStream: (id, _this) => {
                 _this.streamList.map((item, index) => {
                     if (item.getId() === id) {
                         _this.streamList[index].close();
-                        document.querySelector('#video-item-' + id).remove();
                         _this.streamList.splice(index, 1);
                         return 1;
                     }
                     return 0;
                 });
-
-                Renderer.customRender(_this.streamList);
             },
             subscribeStreamEvents: (client, _this) => {
                 client.on("stream-added", function(evt) {
@@ -245,8 +220,6 @@
         mounted() {
             let _this = this;
 
-            Renderer.init("video-canvas");
-
             this.clientOptions = Object.assign(this.clientOptions, this.optionsInit({
                 videoProfile: this.videoProfile,
                 videoProfileLow: this.videoProfileLow,
@@ -288,15 +261,6 @@
                 _this.videoStream.isAudioOn()
                     ? _this.videoStream.muteAudio()
                     : _this.videoStream.unmuteAudio();
-            });
-
-            this.$root.$on('users', function() {
-                _this.$root.users.forEach(function(user) {
-                    let element = document.querySelector('[data-user-stream-id="'+user.streamId+'"]');
-                    if (element) {
-                        element.textContent = user.userName;
-                    }
-                });
             });
 
             this.$root.$on('camera_selected', function(device) {

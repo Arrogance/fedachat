@@ -9,7 +9,7 @@
         </b-button>
         <b-button v-else variant="danger" v-on:click="stopBroadcasting">Detener emisión</b-button>
 
-        <b-modal id="app-broadcast-initializer-modal" ref="broadcast-initializer-modal" title="Empezar a emitir..." hide-footer>
+        <b-modal id="app-broadcast-initializer-modal" ref="broadcast-initializer-modal" title="Empezar a emitir...">
             <section id="media-list-camera">
                 <h5>Selecciona tu cámara</h5>
                 <div class="media-list" v-for="(device) in videoDevices" v-bind:key="device.deviceId">
@@ -30,7 +30,11 @@
                 </div>
             </section>
 
-            <b-button variant="success" v-on:click="startBroadcasting">¡Comenzar a emitir!</b-button>
+            <template v-slot:modal-footer>
+                <div class="text-center">
+                    <b-button variant="success" v-on:click="startBroadcasting">¡Comenzar a emitir!</b-button>
+                </div>
+            </template>
         </b-modal>
     </section>
 </template>
