@@ -34,6 +34,11 @@
             color: $white;
         }
 
+        video {
+            position: relative !important;
+            transform: inherit !important;
+        }
+
         @media (max-width: 1440px) {
             height: 250px;
         }
