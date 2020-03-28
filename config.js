@@ -1,16 +1,10 @@
 export const AGORA_SHARE_ID = 1;
-export const AGORA_APP_ID = process.env.AGORA_APP_ID
-    ? process.env.AGORA_APP_ID
-    : 'a06644ca8e6c4ffaa9673560b30a1135';
-export const AGORA_TOKEN = process.env.AGORA_TOKEN
-    ? process.env.AGORA_TOKEN
-    : '006a06644ca8e6c4ffaa9673560b30a1135IAC9cW9dZOQYrCwWFtUrHzNzRGsMeRPlrE39VKqLuxtTmxArxtkAAAAAEAAULjfHHop/XgEAAQAein9e';
+export const AGORA_APP_ID = process.env.AGORA_APP_ID;
+export const AGORA_TOKEN = process.env.AGORA_TOKEN;
 export const AGORA_RESOLUTION_ARR = {
     '120p,120p_1': [160, 120, 15, 65],
     '360p_4': [640, 360, 30, 600],
     '480p_4': [640, 480, 30, 750],
     '720p_3': [1280, 720, 30, 1710]
 };
-export const SOCKET_ENDPOINT = process.env.SOCKET_ENDPOINT
-    ? process.env.SOCKET_ENDPOINT
-    : 'http://localhost:9000';
+export const SOCKET_ENDPOINT = process.env.SOCKET_ENDPOINT;

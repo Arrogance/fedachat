@@ -2,9 +2,7 @@
     <section id="videos">
         <b-container fluid="">
             <b-row>
-<!--                <b-col cols="12">-->
-                    <div id="video-canvas"></div>
-<!--                </b-col>-->
+                <div id="video-canvas"></div>
             </b-row>
         </b-container>
     </section>
@@ -20,6 +18,9 @@
         AGORA_TOKEN
     } from '../../config';
     import {log} from '../plugins/logger';
+
+    AgoraRTC.Logger.disableLogUpload();
+    AgoraRTC.Logger.setLogLevel(AgoraRTC.Logger.WARNING);
 
     export default {
         props: {
@@ -208,7 +209,18 @@
             setDevice: function() {
                 return new Promise((resolve, reject) => {
                     let options = this.clientOptions;
-                    options.cameraId = this.videoDevice.deviceId;
+
+                    if (null === this.videoDevice && null === this.audioDevice) {
+                        // throw error
+                        return;
+                    }
+
+                    if (null === this.videoDevice) {
+                        options.attendeeMode = 'audio'
+                    } else {
+                        options.cameraId = this.videoDevice.deviceId;
+                    }
+
                     options.microphoneId = this.audioDevice.deviceId;
 
                     this.videoStream = this.streamInit(this.clientUid, options);

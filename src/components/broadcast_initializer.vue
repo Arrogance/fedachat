@@ -3,14 +3,17 @@
         <b-button v-if="true === broadcasting && false === selfMuted" variant="outline-warning" v-on:click="enableSelfMute"><b-icon-mic-fill></b-icon-mic-fill></b-button>
         <b-button v-else-if="true === broadcasting && true === selfMuted" variant="warning" v-on:click="disableSelfMute"><b-icon-mic-mute-fill></b-icon-mic-mute-fill></b-button>
 
-        <b-button v-if="false === broadcasting" variant="success" v-on:click="openModal"><b-icon-camera-video-fill></b-icon-camera-video-fill> Empezar a emitir</b-button>
+        <b-button v-if="false === broadcasting" variant="success" v-on:click="openModal">
+            <b-icon v-if="openingModal" icon="arrow-clockwise" animation="spin"></b-icon>
+            <b-icon-camera-video-fill v-else></b-icon-camera-video-fill> Empezar a emitir
+        </b-button>
         <b-button v-else variant="danger" v-on:click="stopBroadcasting">Detener emisión</b-button>
 
         <b-modal id="app-broadcast-initializer-modal" ref="broadcast-initializer-modal" title="Empezar a emitir..." hide-footer>
             <section id="media-list-camera">
                 <h5>Selecciona tu cámara</h5>
-                <div class="media-list" v-for="device in videoDevices">
-                    <b-button size="lg" variant="outline-primary" v-b-tooltip.top="device.label" v-on:click="setVideoDevice(device)">
+                <div class="media-list" v-for="(device) in videoDevices" v-bind:key="device.deviceId">
+                    <b-button size="lg" :variant="device.deviceId === selectedVideoDevice ? 'primary' : 'outline-primary'" v-b-tooltip.top="device.label" v-on:click="setVideoDevice(device)">
                         <b-icon icon="camera-video-fill" aria-hidden="true"></b-icon>
                         <span>{{ device.label }}</span>
                     </b-button>
@@ -19,8 +22,8 @@
 
             <section id="media-list-audio">
                 <h5>Selecciona tu audio</h5>
-                <div class="media-list" v-for="device in audioDevices">
-                    <b-button size="lg" variant="outline-primary" v-b-tooltip.top="device.label" v-on:click="setAudioDevice(device)">
+                <div class="media-list" v-for="device in audioDevices" v-bind:key="device.deviceId">
+                    <b-button size="lg" :variant="device.deviceId === selectedAudioDevice ? 'primary' : 'outline-primary'" v-b-tooltip.top="device.label" v-on:click="setAudioDevice(device)">
                         <b-icon icon="mic" aria-hidden="true"></b-icon>
                         <span>{{ device.label }}</span>
                     </b-button>
@@ -33,53 +36,75 @@
 </template>
 
 <script>
-    import AgoraRTC from 'agora-rtc-sdk';
-
     export default {
+        data() {
+            return {
+                videoDevices: [],
+                audioDevices: [],
+                selectedVideoDevice: null,
+                selectedAudioDevice: null,
+                broadcasting: false,
+                openingModal: false,
+                selfMuted: false
+            }
+        },
         methods: {
             openModal() {
                 this.videoDevices = [];
                 this.audioDevices = [];
 
+                this.openingModal = true;
+
                 let _this = this;
-
-                if (navigator.mediaDevices.getUserMedia) {
-                    navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(function() {
+                if (navigator.mediaDevices !== undefined) {
+                    navigator.mediaDevices
+                        .enumerateDevices()
+                        .then(() => {
                             _this.$root.mediaEnabled = true;
-                            AgoraRTC.getDevices(function(devices) {
-                                if (devices === undefined) {
-                                    return;
-                                }
 
-                                devices.forEach(function(device) {
-                                    switch(device.kind) {
-                                        case 'audioinput':
-                                            _this.audioDevices.push(device);
-                                            break;
+                            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                            .then(stream => {})
+                            .catch(err => {})
+                            .finally(function() {
+                                navigator.mediaDevices
+                                    .enumerateDevices()
+                                    .then((mediaStream) => {
+                                        mediaStream.forEach(function(device) {
+                                            switch(device.kind) {
+                                                case 'audioinput':
+                                                    _this.audioDevices.push(device);
+                                                    break;
 
-                                        case 'videoinput':
-                                            _this.videoDevices.push(device);
-                                            break;
-                                    }
-                                });
+                                                case 'videoinput':
+                                                    _this.videoDevices.push(device);
+                                                    break;
+                                            }
+                                        });
+
+                                        _this.setAudioDevice(_this.audioDevices[0]);
+                                        _this.setVideoDevice(_this.videoDevices[0]);
+
+                                        _this.$refs['broadcast-initializer-modal'].show('#toggle-btn');
+                                        _this.openingModal = false;
+                                    })
+                                ;
                             });
-
-                            _this.$refs['broadcast-initializer-modal'].show('#toggle-btn');
                         })
-                        .catch(function () {
-                            console.log("Something went wrong!");
-                        });
+                        .catch(function (err) {
+                            console.log("Something went wrong!", err);
+                        })
+                    ;
                 }
             },
             closeModal() {
-                    this.$refs['broadcast-initializer-modal'].hide('#toggle-btn');
+                this.$refs['broadcast-initializer-modal'].hide('#toggle-btn');
             },
             setVideoDevice(device) {
-                console.log(device);
+                this.selectedVideoDevice = device.deviceId;
                 this.$root.$emit('camera_selected', device);
             },
             setAudioDevice(device) {
+                this.selectedAudioDevice = device.deviceId;
                 this.$root.$emit('audio_selected', device);
             },
             startBroadcasting() {
@@ -88,8 +113,7 @@
 
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
-                    type: 'start_broadcasting',
-                    content: this.$root.user.userName +' ha comenzado a emitir.'
+                    type: 'start_broadcasting'
                 });
 
                 this.closeModal();
@@ -100,8 +124,7 @@
 
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
-                    type: 'stop_broadcasting',
-                    content: this.$root.user.userName +' ha dejado de emitir.'
+                    type: 'stop_broadcasting'
                 });
             },
             enableSelfMute() {
@@ -113,14 +136,6 @@
                 this.selfMuted = false;
 
                 this.$root.$emit('self_muted');
-            }
-        },
-        data() {
-            return {
-                videoDevices: [],
-                audioDevices: [],
-                broadcasting: false,
-                selfMuted: false
             }
         },
         mounted() {

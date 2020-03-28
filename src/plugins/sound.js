@@ -4,9 +4,9 @@ export default {
     playBeepSound: function() {
         let sound = new Howl({
             src: ['/sounds/beep.wav'],
-            volume: 0.5,
+            volume: 0.2
         });
 
-        sound.play();
+        // sound.play();
     }
 };

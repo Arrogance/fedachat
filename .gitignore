@@ -5,6 +5,7 @@ public/
 agora/
 npm-debug.log
 yarn-error.log
+.env
 
 # Editor directories and files
 .idea

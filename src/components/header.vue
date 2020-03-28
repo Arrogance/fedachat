@@ -1,7 +1,7 @@
 <template>
     <section id="navbar">
         <b-navbar toggleable="lg" type="dark" variant="dark">
-            <b-container>
+            <b-container fluid="">
                 <b-navbar-brand href="#">
                     <h1>FedaChat</h1>
                 </b-navbar-brand>
@@ -11,8 +11,11 @@
                         <app-broadcast-initializer></app-broadcast-initializer>
                     </b-nav-item>
                     <b-nav-item>
-                        <b-button v-if="this.$root.user" v-text="this.$root.user.userName" @click="toggleModal"></b-button>
-                        <b-button v-else @click="toggleModal">Elegir un nick...</b-button>
+                        <b-button v-if="this.$root.user" v-text="this.$root.user.userName" @click="toggleModal('username-modal')"></b-button>
+                        <b-button v-else @click="toggleModal('username-modal')">Elegir un nick...</b-button>
+                    </b-nav-item>
+                    <b-nav-item>
+                        <b-button @click="toggleModal('options-modal')"> <b-icon-gear></b-icon-gear> <span class="sr-only">Opciones</span></b-button>
                     </b-nav-item>
                 </b-navbar-nav>
             </b-container>
@@ -31,6 +34,18 @@
                 </b-form>
             </b-modal>
         </div>
+
+        <div>
+            <b-modal ref="options-modal" hide-footer title="Opciones">
+                <b-form id="options-form" v-on:submit.prevent="">
+                    <b-form-group>
+                        <b-form-checkbox v-model="chatSoundEnabled" v-on:input="onChatSoundEnabled" :checked="true" :unchecked-value="false">Sonidos del chat activados</b-form-checkbox>
+                    </b-form-group>
+
+                    <b-button type="submit" variant="primary" v-on:click="toggleModal('options-modal')">Aceptar</b-button>
+                </b-form>
+            </b-modal>
+        </div>
     </section>
 </template>
 
@@ -40,7 +55,8 @@
     export default {
         data() {
             return {
-                userName: ''
+                userName: '',
+                chatSoundEnabled: true
             }
         },
         components: {
@@ -54,22 +70,25 @@
 
                 let oldUsername = this.$root.user.userName;
                 this.$root.user.userName = this.userName;
-                this.toggleModal();
+                this.toggleModal('username-modal');
 
                 this.$root.$emit('username_changed', {
                     oldUsername: oldUsername
                 });
             },
-            toggleModal() {
-                // We pass the ID of the button that we want to return focus to
-                // when the modal has hidden
-                this.$refs['username-modal'].toggle('#toggle-btn')
+            onChatSoundEnabled: function() {
+                this.$root.chatSoundEnabled = this.chatSoundEnabled;
+            },
+            toggleModal(ref) {
+                this.$refs[ref].toggle('#toggle-btn')
             }
         },
         mounted() {
             if (this.$root.user) {
                 this.userName = this.$root.user.userName;
             }
+
+            this.chatSoundEnabled = this.$root.chatSoundEnabled;
         }
     }
 </script>

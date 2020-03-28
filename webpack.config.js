@@ -2,6 +2,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const path = require('path');
 const PATHS = {
@@ -88,13 +89,9 @@ module.exports = {
             { from: PATHS.sounds, to: path.join(PATHS.build, 'sounds') }
         ]),
         new VueLoaderPlugin(),
-        new MiniCssExtractPlugin()
-    ],
-    devServer: {
-        contentBase: PATHS.build,
-        disableHostCheck: true,
-        host: '0.0.0.0',
-        compress: true,
-        port: 9000
-    }
+        new MiniCssExtractPlugin(),
+        new Dotenv({
+            path: path.resolve(__dirname, '.env')
+        })
+    ]
 };

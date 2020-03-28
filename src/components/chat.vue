@@ -42,13 +42,13 @@
                         <div v-else-if="message.type === 'start_broadcasting'" :class="message.type">
                             <span>
                                 <b-icon-camera-video-fill></b-icon-camera-video-fill>
-                                {{ message.content }}
+                                {{ message.user.userName }} ha comenzado a emitir.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'stop_broadcasting'" :class="message.type">
                             <span>
                                 <b-icon-camera-video flip-h></b-icon-camera-video>
-                                {{ message.content }}
+                                {{ message.user.userName }} ha dejado de emitir.
                             </span>
                         </div>
                         <div v-else :class="message.type">
@@ -124,7 +124,9 @@
             this.$root.socket.on('message', (message) => {
                 this.messages.push(message);
 
-                SoundsComponent.playBeepSound();
+                if (this.$root.chatSoundEnabled) {
+                    SoundsComponent.playBeepSound();
+                }
 
                 let messageDom = $('.chat-messages');
                 messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);

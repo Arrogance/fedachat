@@ -32,7 +32,7 @@ const App = new Vue({
         userName: null,
         user: null,
         mediaEnabled: false,
-        soundsEnabled: true
+        chatSoundEnabled: true
     },
     methods: {
         refreshUserConnected: function(users) {
