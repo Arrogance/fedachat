@@ -25,6 +25,34 @@
         font-size: 5em;
     }
 
+    .video-stream-pause-video {
+        position: absolute;
+        bottom: 2%;
+        left: 7%;
+        z-index: 9;
+        font-size: 2em;
+        color: $white;
+        cursor: pointer;
+        visibility: hidden;
+    }
+
+    .video-stream-pause-audio {
+        position: absolute;
+        bottom: 2%;
+        right: 7%;
+        z-index: 9;
+        font-size: 2em;
+        color: $white;
+        cursor: pointer;
+        visibility: hidden;
+    }
+
+    &:hover {
+        .video-stream-pause-audio, .video-stream-pause-video {
+            visibility: visible;
+        }
+    }
+
     video {
         position: relative !important;
         transform: inherit !important;

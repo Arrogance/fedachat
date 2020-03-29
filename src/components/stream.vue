@@ -2,6 +2,17 @@
     <div :ref="'video-'+streamId" :id="'video-'+streamId" class="video-stream col-lg-4 col-md-6 col-sm-6 col-xs-12">
         <span class="video-stream-username rounded">{{ streamUser }}</span>
         <span v-if="stream.video === false" class="video-stream-audio-only"><b-icon-mic-fill></b-icon-mic-fill></span>
+        <span v-if="stream.video === true" class="video-stream-pause-video" v-on:click="audioToggle">
+            <b-icon-volume-mute-fill v-if="audioMuted === true"></b-icon-volume-mute-fill>
+            <b-icon-volume-up-fill v-else></b-icon-volume-up-fill>
+        </span>
+        <span v-if="stream.audio === true" class="video-stream-pause-audio" v-on:click="videoToggle">
+            <b-icon icon="camera-video-fill" v-if="videoPaused === false"></b-icon>
+            <b-iconstack v-else>
+                <b-icon stacked icon="camera-video" scale="1"></b-icon>
+                <b-icon stacked icon="slash" scale="2"></b-icon>
+            </b-iconstack>
+        </span>
     </div>
 </template>
 
@@ -13,9 +24,27 @@
         data() {
             return {
                 elementId: null,
+                videoPaused: false,
+                audioMuted: false,
                 stream: this.streamSource,
                 streamId: this.streamSource.getId(),
                 streamUser: ''
+            }
+        },
+        methods: {
+            videoToggle: function() {
+                if (this.videoPaused === true) {
+                    this.videoPaused = !this.stream.unmuteVideo();
+                } else {
+                    this.videoPaused = this.stream.muteVideo();
+                }
+            },
+            audioToggle: function() {
+                if (this.audioMuted === true) {
+                    this.audioMuted = !this.stream.unmuteAudio();
+                } else {
+                    this.audioMuted = this.stream.muteAudio();
+                }
             }
         },
         mounted() {
@@ -33,8 +62,6 @@
             this.$root.$on('users', function() {
                 _this.$root.users.forEach(updateStreamName);
             });
-
-            console.log(this.stream);
 
             this.$refs[ this.elementId].querySelectorAll('div').forEach(e => {
                 e.classList.add('rounded');
