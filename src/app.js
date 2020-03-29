@@ -30,7 +30,11 @@ const App = new Vue({
         socket: socket,
         users: [],
         userName: null,
-        user: null,
+        user: {
+            userName: null,
+            streamId: null,
+            uuid: null
+        },
         mediaEnabled: false,
         chatSoundEnabled: false
     },
@@ -42,7 +46,7 @@ const App = new Vue({
     mounted() {
         let _this = this;
 
-        if (this.userName === null) {
+        if (this.user.userName === null) {
             let userName = randomWords({
                 exactly: 3,
                 wordsPerString: 1,
@@ -56,12 +60,12 @@ const App = new Vue({
                 }
             });
 
-            this.userName = userName.join('_').substring(0, 22);
-        }
+            this.user.userName = userName.join('_').substring(0, 22);
 
-        this.socket.emit('user_connected', {
-            userName: _this.userName.substring(0, 22)
-        });
+            this.socket.emit('user_connected', {
+                userName: _this.user.userName.substring(0, 22)
+            });
+        }
 
         this.$on('username_changed', function() {
             this.user.userName = this.user.userName.substring(0, 22);

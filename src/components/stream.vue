@@ -17,8 +17,6 @@
             }
         },
         mounted() {
-            console.log(this.stream.getId());
-
             this.stream.play('video-'+this.streamId);
 
             let _this = this;
@@ -34,7 +32,6 @@
             });
 
             this.$refs['video-'+this.streamId].querySelectorAll('div').forEach(e => {
-                console.log(e);
                 e.classList.add('rounded');
             });
         }

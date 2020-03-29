@@ -15,8 +15,14 @@ const PATHS = {
 };
 
 module.exports = env => {
+    if (env === undefined) {
+        env = {};
+    }
+
+    env.NODE_ENV = env.NODE_ENV ? env.NODE_ENV : 'development';
+
     return {
-        mode: env.NODE_ENV === 'production' ? 'production' : 'development',
+        mode: env.NODE_ENV,
         entry: {
             app: PATHS.src + '/app.js'
         },
