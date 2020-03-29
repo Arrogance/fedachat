@@ -47,8 +47,20 @@
         visibility: hidden;
     }
 
+    .video-stream-fullscreen-video {
+        position: absolute;
+        bottom: 2%;
+        transform: translate(-50%, 0);
+        left: 50%;
+        z-index: 9;
+        font-size: 2em;
+        color: $white;
+        cursor: pointer;
+        visibility: hidden;
+    }
+
     &:hover {
-        .video-stream-pause-audio, .video-stream-pause-video {
+        .video-stream-pause-audio, .video-stream-pause-video, .video-stream-fullscreen-video {
             visibility: visible;
         }
     }

@@ -13,6 +13,9 @@
                 <b-icon stacked icon="slash" scale="2"></b-icon>
             </b-iconstack>
         </span>
+        <span v-if="stream.video === true" class="video-stream-fullscreen-video" v-on:click="fullscreenToggle">
+            <b-icon icon="fullscreen"></b-icon>
+        </span>
     </div>
 </template>
 
@@ -44,6 +47,18 @@
                     this.audioMuted = !this.stream.unmuteAudio();
                 } else {
                     this.audioMuted = this.stream.muteAudio();
+                }
+            },
+            fullscreenToggle: function() {
+                let element = this.$refs[this.elementId].querySelector('video');
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.mozRequestFullScreen) { /* Firefox */
+                    element.mozRequestFullScreen();
+                } else if (element.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                    element.webkitRequestFullscreen();
+                } else if (element.msRequestFullscreen) { /* IE/Edge */
+                    element.msRequestFullscreen();
                 }
             }
         },
