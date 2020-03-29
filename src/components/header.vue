@@ -22,14 +22,12 @@
         </b-navbar>
 
         <div>
-            <b-modal ref="username-modal" centered title="Elige un nick" no-close-on-esc no-close-on-backdrop hide-header-close visible>
+            <b-modal ref="username-modal" centered title="Elige un nombre de usuario" no-close-on-esc no-close-on-backdrop hide-header-close visible>
                 <b-form id="username-form" v-on:submit.prevent="">
                     <b-form-group id="username-group">
                         <b-form >
                             <b-form-input id="username" :state="userNameValidation.message === null" v-model="userName" v-on:keydown.enter.prevent='onUsernameSubmit' type="text" required max="22"></b-form-input>
-                            <b-form-invalid-feedback>
-                                Your user ID must be 5-12 characters long.
-                            </b-form-invalid-feedback>
+                            <b-form-invalid-feedback v-text="userNameValidation.message"></b-form-invalid-feedback>
                         </b-form>
                     </b-form-group>
                 </b-form>
