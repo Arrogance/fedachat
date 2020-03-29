@@ -75,6 +75,19 @@
                     return;
                 }
 
+                let alreadyExists = false;
+                let _this = this;
+                this.$root.users.forEach(function(user) {
+                    if (user.userName === _this.userName) {
+                        alreadyExists = true;
+                    }
+                });
+
+                if (alreadyExists === true) {
+                    _this.setUserNameValidation('El nombre elegido ya está en uso.');
+                    return;
+                }
+
                 let oldUsername = this.$root.user.userName;
                 if (oldUsername === this.userName) {
                     this.toggleModal('username-modal');
