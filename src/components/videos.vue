@@ -28,7 +28,7 @@
             videoProfile: {
                 type: String,
                 default() {
-                    return '480p_4'
+                    return '720p_3'
                 }
             },
             videoProfileLow: {
@@ -60,8 +60,8 @@
         methods: {
             optionsInit: (options) => {
                 return {
-                    videoProfile: options.videoProfile.split(',')[0] || '480p_4',
-                    videoProfileLow: options.videoProfileLow.split(',')[0] || '480p_4',
+                    videoProfile: options.videoProfile.split(',')[0] || '720p_3',
+                    videoProfileLow: options.videoProfileLow.split(',')[0] || '720p_3',
                     channel: options.channel || "test",
                     transcode: options.transcode || "rtc",
                     attendeeMode: options.attendeeMode || "video",
@@ -191,7 +191,7 @@
                     }
 
                     if (null === this.videoDevice) {
-                        options.attendeeMode = 'audio'
+                        options.attendeeMode = 'audio-only'
                     } else {
                         options.cameraId = this.videoDevice.deviceId;
                     }

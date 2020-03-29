@@ -1,6 +1,7 @@
 <template>
     <div :ref="'video-'+streamId" :id="'video-'+streamId" class="video-stream col-lg-4 col-md-6 col-sm-6 col-xs-12">
-        <span class="video-stream-username">{{ streamUser }}</span>
+        <span class="video-stream-username rounded">{{ streamUser }}</span>
+        <span v-if="stream.video === false" class="video-stream-audio-only"><b-icon-mic-fill></b-icon-mic-fill></span>
     </div>
 </template>
 
@@ -11,13 +12,15 @@
         },
         data() {
             return {
+                elementId: null,
                 stream: this.streamSource,
                 streamId: this.streamSource.getId(),
                 streamUser: ''
             }
         },
         mounted() {
-            this.stream.play('video-'+this.streamId);
+            this.elementId = 'video-'+this.streamId;
+            this.stream.play( this.elementId);
 
             let _this = this;
             let updateStreamName = (user) => {
@@ -31,9 +34,18 @@
                 _this.$root.users.forEach(updateStreamName);
             });
 
-            this.$refs['video-'+this.streamId].querySelectorAll('div').forEach(e => {
+            console.log(this.stream);
+
+            this.$refs[ this.elementId].querySelectorAll('div').forEach(e => {
                 e.classList.add('rounded');
             });
+
+            if (this.stream.video === false) {
+                let playerDom = this.$refs[this.elementId].querySelector('div[id^="player_"]');
+                if (playerDom) {
+                    playerDom.classList.add('audio-only');
+                }
+            }
         }
     }
 </script>

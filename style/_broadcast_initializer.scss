@@ -20,7 +20,7 @@
                 display: inherit;
                 width: 130px;
             }
-            svg {
+            > svg:not(.b-iconstack) {
                 width: 35px;
                 height: 35px;
             }

@@ -12,6 +12,15 @@
         <b-modal id="app-broadcast-initializer-modal" ref="broadcast-initializer-modal" title="Empezar a emitir...">
             <section id="media-list-camera">
                 <h5>Selecciona tu cámara</h5>
+                <div class="media-list">
+                    <b-button size="lg" :variant="null === selectedVideoDevice ? 'primary' : 'outline-primary'"  v-b-tooltip.top="'Sin cámara'" v-on:click="setVideoDevice(null)">
+                        <b-iconstack font-scale="2">
+                            <b-icon stacked icon="camera-video-fill" scale="1"></b-icon>
+                            <b-icon stacked icon="x" variant="danger" scale="2"></b-icon>
+                        </b-iconstack>
+                        <span>Sin cámara</span>
+                    </b-button>
+                </div>
                 <div class="media-list" v-for="(device) in videoDevices" v-bind:key="device.deviceId">
                     <b-button size="lg" :variant="device.deviceId === selectedVideoDevice ? 'primary' : 'outline-primary'" v-b-tooltip.top="device.label" v-on:click="setVideoDevice(device)">
                         <b-icon icon="camera-video-fill" aria-hidden="true"></b-icon>
@@ -86,7 +95,7 @@
                                         });
 
                                         _this.setAudioDevice(_this.audioDevices[0]);
-                                        _this.setVideoDevice(_this.videoDevices[0]);
+                                        _this.setVideoDevice(null);
 
                                         _this.$refs['broadcast-initializer-modal'].show('#toggle-btn');
                                         _this.openingModal = false;
@@ -104,8 +113,8 @@
                 this.$refs['broadcast-initializer-modal'].hide('#toggle-btn');
             },
             setVideoDevice(device) {
-                this.selectedVideoDevice = device.deviceId;
-                this.$root.$emit('camera_selected', device);
+                this.selectedVideoDevice = device !== null ? device.deviceId : null;
+                this.$root.$emit('camera_selected', device ? device : null);
             },
             setAudioDevice(device) {
                 this.selectedAudioDevice = device.deviceId;

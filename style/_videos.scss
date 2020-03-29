@@ -19,32 +19,3 @@
         }
     }
 }
-
-#app-videos {
-    .video-stream {
-        max-height: 300px;
-        height: 300px;
-        .video-stream-username {
-            position: absolute;
-            top: 5px;
-            left: 20px;
-            padding: 4px 6px;
-            z-index: 1;
-            background: rgba($black, 0.5);
-            color: $white;
-        }
-
-        video {
-            position: relative !important;
-            transform: inherit !important;
-        }
-
-        @media (max-width: 1440px) {
-            height: 250px;
-        }
-
-        @media (max-width: 1024px) {
-            height: 200px;
-        }
-    }
-}
