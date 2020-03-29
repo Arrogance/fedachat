@@ -95,3 +95,5 @@ const App = new Vue({
     },
     router: Router
 });
+
+export default App;

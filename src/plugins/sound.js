@@ -1,4 +1,5 @@
-import { Howl, Howler } from 'howler';
+import { Howl } from 'howler';
+import App from '../app.js';
 
 export default {
     playBeepSound: function() {
@@ -7,6 +8,6 @@ export default {
             volume: 0.2
         });
 
-        sound.play();
+        App.$data.chatSoundEnabled && sound.play();
     }
 };

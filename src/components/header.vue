@@ -83,8 +83,6 @@
                     return;
                 }
 
-                console.log(this.$root.user.userName, this.$root.user, oldUsername, this.userName);
-
                 this.$root.user.userName = this.userName;
                 this.toggleModal('username-modal');
 
