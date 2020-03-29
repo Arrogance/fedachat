@@ -37,7 +37,7 @@ const App = new Vue({
         },
         mediaEnabled: false,
         chatSoundEnabled: false,
-        forceNewUserNameOnJoin: false
+        forceNewUserNameOnJoin: true
     },
     methods: {
         refreshUserConnected: function(users) {
