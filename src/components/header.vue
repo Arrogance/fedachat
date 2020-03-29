@@ -105,9 +105,10 @@
         },
         watch: {
             userName: function(value) {
-                if (value !== null && value.length === 0) {
+                if (value === null || value.length === 0) {
                     this.setUserNameValidation('Es obligatorio indicar un nombre de usuario.');
                 } else {
+                    this.userName = this.userName.replace(/ /g, '_');
                     this.setUserNameValidation();
                 }
             }

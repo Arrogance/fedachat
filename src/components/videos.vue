@@ -206,7 +206,9 @@
                     this.videoStream.init(
                         () => {
                             this.addStream(this.videoStream, true, this);
-                            this.client.publish(this.videoStream);
+                            if (null !== this.videoStream.getId()) {
+                                this.client.publish(this.videoStream);
+                            }
                             resolve();
                         },
                         err => {
