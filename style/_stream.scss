@@ -68,6 +68,7 @@
     video {
         position: relative !important;
         transform: inherit !important;
+        object-fit: scale-down !important;
     }
 
     @media (max-width: 1440px) {
