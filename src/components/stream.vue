@@ -2,18 +2,18 @@
     <div :ref="'video-'+streamId" :id="'video-'+streamId" class="video-stream col-lg-4 col-md-6 col-sm-6 col-xs-12">
         <span class="video-stream-username rounded">{{ streamUser }}</span>
         <span v-if="stream.video === false" class="video-stream-audio-only"><b-icon-mic-fill></b-icon-mic-fill></span>
-        <span v-if="stream.audio === true" class="video-stream-pause-video" v-on:click="audioToggle">
+        <span v-if="!streamUser && stream.audio === true" class="video-stream-pause-video" v-on:click="audioToggle">
             <b-icon-volume-mute-fill v-if="audioMuted === true"></b-icon-volume-mute-fill>
             <b-icon-volume-up-fill v-else></b-icon-volume-up-fill>
         </span>
-        <span v-if="stream.video === true" class="video-stream-pause-audio" v-on:click="videoToggle">
+        <span v-if="!streamUser && stream.video === true" class="video-stream-pause-audio" v-on:click="videoToggle">
             <b-icon icon="camera-video-fill" v-if="videoPaused === false"></b-icon>
             <b-iconstack v-else>
                 <b-icon stacked icon="camera-video" scale="1"></b-icon>
                 <b-icon stacked icon="slash" scale="2"></b-icon>
             </b-iconstack>
         </span>
-        <span v-if="stream.video === true" class="video-stream-fullscreen-video" v-on:click="fullscreenToggle">
+        <span v-if="!streamUser && stream.video === true" class="video-stream-fullscreen-video" v-on:click="fullscreenToggle">
             <b-icon icon="fullscreen"></b-icon>
         </span>
     </div>
@@ -31,6 +31,7 @@
                 audioMuted: false,
                 stream: this.streamSource,
                 streamId: this.streamSource.getId(),
+                ownStream: false,
                 streamUser: ''
             }
         },
@@ -64,7 +65,9 @@
         },
         mounted() {
             this.elementId = 'video-'+this.streamId;
-            this.stream.play( this.elementId);
+            this.stream.play(this.elementId);
+
+            this.streamUser = this.$root.user.streamId === this.streamId;
 
             let _this = this;
             let updateStreamName = (user) => {

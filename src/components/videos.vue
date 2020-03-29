@@ -212,6 +212,7 @@
                             resolve();
                         },
                         err => {
+                            this.$root.$emit('stop_broadcasting');
                             console.log("getUserMedia failed", err);
                             reject(err);
                         }
