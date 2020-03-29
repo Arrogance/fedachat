@@ -7,7 +7,7 @@
         video {
             position: relative !important;
             transform: inherit !important;
-            object-fit: scale-down;
+            object-fit: scale-down !important;
         }
         .video-item-username {
             position: absolute;
