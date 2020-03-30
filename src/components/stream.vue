@@ -38,16 +38,20 @@
         methods: {
             videoToggle: function() {
                 if (this.videoPaused === true) {
-                    this.videoPaused = !this.stream.unmuteVideo();
+                    this.stream.unmuteVideo();
+                    this.videoPaused = false;
                 } else {
-                    this.videoPaused = this.stream.muteVideo();
+                    this.stream.muteVideo();
+                    this.videoPaused = true;
                 }
             },
             audioToggle: function() {
                 if (this.audioMuted === true) {
-                    this.audioMuted = !this.stream.unmuteAudio();
+                    this.stream.unmuteAudio();
+                    this.audioMuted = false;
                 } else {
-                    this.audioMuted = this.stream.muteAudio();
+                    this.stream.muteAudio();
+                    this.videoPaused = true;
                 }
             },
             fullscreenToggle: function() {
