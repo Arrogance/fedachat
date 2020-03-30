@@ -2,7 +2,7 @@
     <section id="app-videos">
         <b-container fluid="">
             <b-row class="mt-4">
-                <app-stream v-for="stream in streamList" v-bind:stream-source="stream" v-bind:key="stream.getId()"></app-stream>
+                <app-stream v-for="stream in streamList" v-bind:stream-source="stream" v-bind:key="stream.getId()" v-bind:client="client"></app-stream>
             </b-row>
         </b-container>
     </section>
@@ -193,6 +193,7 @@
                     if (null === this.videoDevice) {
                         options.attendeeMode = 'audio-only'
                     } else {
+                        options.attendeeMode = 'video';
                         options.cameraId = this.videoDevice.deviceId;
                     }
 
@@ -264,6 +265,12 @@
                 _this.videoStream.isAudioOn()
                     ? _this.videoStream.muteAudio()
                     : _this.videoStream.unmuteAudio();
+            });
+
+            this.$root.$on('self_paused', function() {
+                _this.videoStream.isVideoOn()
+                    ? _this.videoStream.muteVideo()
+                    : _this.videoStream.unmuteVideo();
             });
 
             this.$root.$on('camera_selected', function(device) {

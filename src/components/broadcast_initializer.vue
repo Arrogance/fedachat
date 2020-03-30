@@ -1,7 +1,15 @@
 <template>
     <section id="app-broadcast-initializer">
-        <b-button v-if="true === broadcasting && false === selfMuted" variant="outline-warning" v-on:click="enableSelfMute"><b-icon-mic-fill></b-icon-mic-fill></b-button>
-        <b-button v-else-if="true === broadcasting && true === selfMuted" variant="warning" v-on:click="disableSelfMute"><b-icon-mic-mute-fill></b-icon-mic-mute-fill></b-button>
+        <b-button v-if="true === broadcasting && false === selfMuted" variant="outline-warning" v-on:click="enableSelfAudioMute"><b-icon-mic-fill></b-icon-mic-fill></b-button>
+        <b-button v-else-if="true === broadcasting && true === selfMuted" variant="warning" v-on:click="disableSelfAudioMute"><b-icon-mic-mute-fill></b-icon-mic-mute-fill></b-button>
+
+        <b-button v-if="true === broadcasting && false === selfPaused" variant="outline-warning" v-on:click="enableSelfVideoPause"><b-icon-camera-video-fill></b-icon-camera-video-fill></b-button>
+        <b-button v-else-if="true === broadcasting && true === selfPaused" variant="warning" v-on:click="disableSelfVideoPause">
+            <b-iconstack>
+                <b-icon stacked icon="camera-video" scale="1"></b-icon>
+                <b-icon stacked icon="slash" scale="2"></b-icon>
+            </b-iconstack>
+        </b-button>
 
         <b-button v-if="false === broadcasting" variant="success" v-on:click="openModal">
             <b-icon v-if="openingModal" icon="arrow-clockwise" animation="spin"></b-icon>
@@ -58,7 +66,8 @@
                 selectedAudioDevice: null,
                 broadcasting: false,
                 openingModal: false,
-                selfMuted: false
+                selfMuted: false,
+                selfPaused: false
             }
         },
         methods: {
@@ -142,15 +151,25 @@
                     type: 'stop_broadcasting'
                 });
             },
-            enableSelfMute() {
+            enableSelfAudioMute() {
                 this.selfMuted = true;
 
                 this.$root.$emit('self_muted');
             },
-            disableSelfMute() {
+            disableSelfAudioMute() {
                 this.selfMuted = false;
 
                 this.$root.$emit('self_muted');
+            },
+            enableSelfVideoPause() {
+                this.selfPaused = true;
+
+                this.$root.$emit('self_paused');
+            },
+            disableSelfVideoPause() {
+                this.selfPaused = false;
+
+                this.$root.$emit('self_paused');
             }
         },
         mounted() {

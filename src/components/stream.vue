@@ -22,12 +22,15 @@
 <script>
     export default {
         props: {
-            streamSource: Object
+            streamSource: Object,
+            client: Object,
         },
         data() {
             return {
                 elementId: null,
+                remoteVideoPaused: false,
                 videoPaused: false,
+                remoteAudioMuted: false,
                 audioMuted: false,
                 stream: this.streamSource,
                 streamId: this.streamSource.getId(),
@@ -37,21 +40,29 @@
         },
         methods: {
             videoToggle: function() {
+                if (this.remoteVideoPaused && !this.videoPaused) {
+                    return;
+                }
+
                 if (this.videoPaused === true) {
                     this.stream.unmuteVideo();
                     this.videoPaused = false;
                 } else {
-                    this.stream.muteVideo();
-                    this.videoPaused = true;
+                    let mute = this.stream.muteVideo();
+                    this.videoPaused = mute === true;
                 }
             },
             audioToggle: function() {
+                if (this.remoteAudioMuted && !this.audioMuted) {
+                    return;
+                }
+
                 if (this.audioMuted === true) {
                     this.stream.unmuteAudio();
                     this.audioMuted = false;
                 } else {
-                    this.stream.muteAudio();
-                    this.videoPaused = true;
+                    let mute = this.stream.muteAudio();
+                    this.audioMuted = mute === true;
                 }
             },
             fullscreenToggle: function() {
@@ -98,6 +109,30 @@
                     playerDom.classList.add('audio-only');
                 }
             }
+
+            this.client.on('mute-audio', function(stream) {
+                if (_this.streamId === stream.uid) {
+                    _this.remoteAudioMuted = true;
+                }
+            });
+
+            this.client.on('unmute-audio', function(stream) {
+                if (_this.streamId === stream.uid) {
+                    _this.remoteAudioMuted = false;
+                }
+            });
+
+            this.client.on('mute-video', function(stream) {
+                if (_this.streamId === stream.uid) {
+                    _this.remoteVideoPaused = true;
+                }
+            });
+
+            this.client.on('unmute-video', function(stream) {
+                if (_this.streamId === stream.uid) {
+                    _this.remoteVideoPaused = false;
+                }
+            });
         }
     }
 </script>
