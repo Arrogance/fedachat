@@ -82,6 +82,8 @@
                                 navigator.mediaDevices
                                     .enumerateDevices()
                                     .then((mediaStream) => {
+                                        _this.audioDevices = [];
+                                        _this.videoDevices = [];
                                         mediaStream.forEach(function(device) {
                                             switch(device.kind) {
                                                 case 'audioinput':

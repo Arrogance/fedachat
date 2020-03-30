@@ -32,7 +32,7 @@
                 stream: this.streamSource,
                 streamId: this.streamSource.getId(),
                 ownStream: false,
-                streamUser: ''
+                streamUser: null
             }
         },
         methods: {
@@ -67,7 +67,7 @@
             this.elementId = 'video-'+this.streamId;
             this.stream.play(this.elementId);
 
-            this.streamUser = this.$root.user.streamId === this.streamId;
+            this.streamUser = this.$root.user.streamId === this.streamId ? this.$root.user : null;
 
             let _this = this;
             let updateStreamName = (user) => {
