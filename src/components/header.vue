@@ -78,7 +78,7 @@
                 let alreadyExists = false;
                 let _this = this;
                 this.$root.users.forEach(function(user) {
-                    if (user.userName === _this.userName) {
+                    if (user.uuid !== _this.$root.user.uuid && user.userName === _this.userName) {
                         alreadyExists = true;
                     }
                 });
@@ -101,7 +101,6 @@
                     oldUsername: oldUsername
                 });
 
-                this.userName = null;
                 this.setUserNameValidation();
             },
             setUserNameValidation(message) {
