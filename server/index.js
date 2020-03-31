@@ -17,7 +17,7 @@ let users = [];
 let messages = [];
 
 io.on('connection', socket => {
-    let admin = new Admin(socket, users);
+    let admin = new Admin(socket, io, users);
     let user;
 
     socket.emit('users', users);

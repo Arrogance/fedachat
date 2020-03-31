@@ -7,7 +7,7 @@
         "build-dev": "webpack --watch",
         "build": "webpack --env.NODE_ENV=production --progress --display-error-details",
         "lint": "eslint src/**/*.{js,jsx} --fix",
-        "server": "node -r esm ./server/index.js"
+        "server": "node -r dotenv/config -r esm ./server/index.js"
     },
     "repository": {
         "type": "git",

@@ -1,9 +1,11 @@
 import { ADMIN_PASSWORD } from '../config';
 
 export default class Admin {
-    constructor(socket, users) {
+    constructor(socket, io, users) {
         this.socket = socket;
+        this.io = io;
         this.users = users;
+        this.isAdmin = false;
     }
 
     command(command, content) {
@@ -11,13 +13,17 @@ export default class Admin {
         return eval('this.' + command)(content, this);
     }
 
-    admin(content) {
+    admin(content, _this) {
         if (content[0] === ADMIN_PASSWORD) {
-            this.socket.isAdmin = true;
+            _this.isAdmin = true;
         }
     }
 
     stop(content, _this) {
+        if (!_this.isAdmin) {
+            return;
+        }
+
         let streamUser;
 
         _this.users.forEach(function(t) {
@@ -27,11 +33,11 @@ export default class Admin {
         });
 
         if (streamUser) {
-            _this.socket.emit('stop_streaming', streamUser);
-            _this.socket.emit('message', {
-                type: 'chat',
+            _this.io.emit('stop_streaming', streamUser);
+            _this.io.emit('message', {
+                type: 'admin_stop_broadcasting',
                 user: _this.user,
-                content: 'Ha cerrado el chat de '+streamUser.userName
+                content: streamUser.userName
             });
         }
     }

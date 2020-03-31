@@ -47,6 +47,12 @@
                                 <strong>{{ message.user.userName }}</strong> ha dejado de emitir.
                             </span>
                         </div>
+                        <div v-else-if="message.type === 'admin_stop_broadcasting'" :class="message.type">
+                            <span>
+                                <b-icon-camera-video flip-h></b-icon-camera-video>
+                                <strong>{{ message.user.userName }}</strong> ha cerrado la retransmisión de {{ message.content }}.
+                            </span>
+                        </div>
                         <div v-else :class="message.type">
                             <span>{{ message.content }}</span>
                         </div>
