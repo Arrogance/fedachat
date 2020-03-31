@@ -8,3 +8,4 @@ export const AGORA_RESOLUTION_ARR = {
     '720p_3': [1280, 720, 30, 1710]
 };
 export const SOCKET_ENDPOINT = process.env.SOCKET_ENDPOINT;
+export const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;

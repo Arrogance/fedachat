@@ -131,6 +131,10 @@
                 }
             },
             removeStream: (id, _this) => {
+                if (_this.$root.user && _this.$root.user.streamId === id) {
+                    _this.$root.$emit('stop_broadcasting');
+                }
+
                 _this.streamList.map((item, index) => {
                     if (item.getId() === id) {
                         _this.streamList[index].close();
@@ -241,6 +245,10 @@
 
             this.clientInit(this.client, this.clientOptions).then(uid => {
                 this.clientUid = uid;
+            });
+
+            this.$root.socket.on('stop_streaming', function(user) {
+               _this.removeStream(user.streamId, _this)
             });
 
             this.$root.$on('start_broadcasting', function() {

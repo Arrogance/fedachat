@@ -5,6 +5,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+import Admin from './admin';
 import UserModel from './models/user';
 import MessageModel from './models/message';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,7 +17,14 @@ let users = [];
 let messages = [];
 
 io.on('connection', socket => {
+    let admin = new Admin(socket, users);
+    let user;
+
     socket.emit('users', users);
+
+    socket.on('message_command', function(event) {
+        admin.command(event.command, event.content);
+    });
 
     socket.on('message', function(event) {
         let message = new MessageModel(event.type, event.content);
@@ -36,10 +44,11 @@ io.on('connection', socket => {
     });
 
     socket.on('user_connected', function(event) {
-        let user = new UserModel(uuidv4(), event.userName);
+        user = new UserModel(uuidv4(), event.userName);
         user.addSocket(socket.id);
 
         users.push(user);
+        admin.user = user;
 
         let message = {
             user: user,
@@ -48,6 +57,8 @@ io.on('connection', socket => {
 
         io.emit('message', message);
         io.emit('users', users);
+
+        admin.users = users;
 
         socket.emit('user_details', user);
     });
@@ -62,7 +73,7 @@ io.on('connection', socket => {
             return value;
         });
 
-        console.log('User modified', users);
+        admin.users = users;
 
         io.emit('users', users);
     });
@@ -81,6 +92,8 @@ io.on('connection', socket => {
 
             return value.socket !== socket.id;
         });
+
+        admin.users = users;
 
         io.emit('users', users);
     });

@@ -85,6 +85,21 @@
                     return;
                 }
 
+                if (this.message[0] === '/') {
+                    let content = this.message.split(/\s+/),
+                        command = content[0].replace('/', '');
+
+                    content.shift();
+
+                    this.$root.socket.emit('message_command', {
+                        command: command,
+                        content: content
+                    });
+
+                    this.message = '';
+                    return;
+                }
+
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
                     type: 'chat',
