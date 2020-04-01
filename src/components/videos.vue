@@ -131,10 +131,6 @@
                 }
             },
             removeStream: (id, _this) => {
-                if (_this.$root.user && _this.$root.user.streamId === id) {
-                    _this.$root.$emit('stop_broadcasting');
-                }
-
                 _this.streamList.map((item, index) => {
                     if (item.getId() === id) {
                         _this.streamList[index].close();
@@ -248,7 +244,14 @@
             });
 
             this.$root.socket.on('stop_streaming', function(user) {
-               _this.removeStream(user.streamId, _this)
+               _this.removeStream(user.streamId, _this);
+
+                if (_this.$root.user && _this.$root.user.streamId === user.streamId) {
+                    _this.$root.$emit('video_reset');
+                    _this.$root.$emit('audio_reset');
+
+                    _this.$root.$emit('stopped_broadcasting');
+                }
             });
 
             this.$root.$on('start_broadcasting', function() {

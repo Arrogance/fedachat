@@ -1,4 +1,5 @@
 import { ADMIN_PASSWORD } from '../config';
+import Notification from './notification';
 
 export default class Admin {
     constructor(socket, io, users) {
@@ -6,6 +7,8 @@ export default class Admin {
         this.io = io;
         this.users = users;
         this.isAdmin = false;
+
+        this.notification = new Notification(socket, io);
     }
 
     command(command, content) {
@@ -16,7 +19,11 @@ export default class Admin {
     admin(content, _this) {
         if (content[0] === ADMIN_PASSWORD) {
             _this.isAdmin = true;
+            _this.notification.success('admin_success');
+            return;
         }
+
+        _this.notification.danger('admin_error');
     }
 
     stop(content, _this) {

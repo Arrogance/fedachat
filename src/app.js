@@ -15,6 +15,7 @@ const Router = new VueRouter({
 Vue.use(VueRouter);
 
 import HeaderComponent from './components/header.vue';
+import NotificationsComponent from './components/notifications.vue';
 import randomWords from 'random-words';
 
 import { SOCKET_ENDPOINT } from '../config';
@@ -24,7 +25,8 @@ const socket = io(SOCKET_ENDPOINT);
 const App = new Vue({
     el: '#app',
     components: {
-        'app-header': HeaderComponent
+        'app-header': HeaderComponent,
+        'app-notifications': NotificationsComponent
     },
     data: {
         socket: socket,
@@ -75,6 +77,11 @@ const App = new Vue({
 
         this.$on('user_started_broadcasting', function(streamId) {
             this.user.streamId = streamId;
+            this.socket.emit('user_modified', this.user);
+        });
+
+        this.$on('user_stopped_broadcasting', function() {
+            this.user.streamId = null;
             this.socket.emit('user_modified', this.user);
         });
 

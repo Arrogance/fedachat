@@ -146,6 +146,7 @@
                 this.$root.$emit('stop_broadcasting');
                 this.selfMuted = false;
 
+                this.$root.$emit('user_stopped_broadcasting');
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
                     type: 'stop_broadcasting'

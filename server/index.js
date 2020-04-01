@@ -6,6 +6,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
 import Admin from './admin';
+import Notification from './notification';
+
 import UserModel from './models/user';
 import MessageModel from './models/message';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,7 +19,9 @@ let users = [];
 let messages = [];
 
 io.on('connection', socket => {
-    let admin = new Admin(socket, io, users);
+    let admin = new Admin(socket, io, users),
+        notification = new Notification(socket, io);
+
     let user;
 
     socket.emit('users', users);
