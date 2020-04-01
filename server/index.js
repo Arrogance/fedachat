@@ -31,9 +31,7 @@ io.on('connection', socket => {
 
         if (event.user) {
             users.forEach(function(value) {
-                console.log(value.uuid, event.user.uuid);
                 if (value.uuid === event.user.uuid) {
-                    console.log('User found', value);
                     message.setUser(value);
                 }
             });
