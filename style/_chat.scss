@@ -4,7 +4,18 @@
     width: 100%;
     top: 0;
 
-    @media (min-width: 768px) {  }
+    @media (max-width: 425px) {
+        position: relative;
+        height: 100%;
+        padding: 0;
+
+        .container {
+            > .row {
+                margin: 0;
+                padding: 0 10px !important;
+            }
+        }
+    }
 
     @media (min-width: 992px) {  }
 
@@ -13,6 +24,9 @@
     .users-list {
         border-bottom: 1px dashed darken($light, 8);
         padding: 8px 10px 12px;
+        @media (max-width: 425px) {
+            padding: 8px 0 12px;
+        }
     }
 
     .chat-messages {
@@ -20,6 +34,13 @@
         overflow: hidden;
         overflow-y: scroll;
         width: 100%;
+
+        @media (max-width: 425px) {
+            position: relative;
+            height: auto;
+            bottom: 0;
+            padding: 0 !important;
+        }
     }
 
     .chat-form {
@@ -39,6 +60,14 @@
 
         .chat-input-send {
             float: right;
+        }
+
+        @media (max-width: 425px) {
+            width: 100%;
+            bottom: 0;
+            position: fixed;
+            height: auto;
+            padding: 10px;
         }
     }
 }

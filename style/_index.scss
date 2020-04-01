@@ -1,4 +1,15 @@
 #index {
+    .left-column {
+        @media (max-width: 425px) {
+            & {
+                display: none;
+            }
+            &.show {
+                display: block;
+            }
+        }
+    }
+
     .right-column {
         padding: 5px 0 0;
         background-color: $light;
@@ -12,6 +23,15 @@
             width: 100%;
             padding-right: 15px;
             padding-left: 15px;
+        }
+
+        @media (max-width: 425px) {
+            display: none;
+            position: relative;
+            padding: 0;
+            &.show {
+                display: block;
+            }
         }
     }
 }

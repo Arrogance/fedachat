@@ -10,3 +10,37 @@
 
 // Pages
 @import "index";
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 425px) {
+    .hide-425 {
+        display: none;
+    }
+    .show-425 {
+        display: inline-block;
+    }
+    .hide-375 {
+        display: none;
+    }
+    .show-375 {
+        display: inline-block;
+    }
+    .capitalize-425 {
+        text-transform: capitalize;
+    }
+}
+
+@media (max-width: 375px) {
+    .hide-375 {
+        display: none;
+    }
+    .show-375 {
+        display: inline-block;
+    }
+    .capitalize-425 {
+        text-transform: capitalize;
+    }
+}

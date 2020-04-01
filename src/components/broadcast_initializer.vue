@@ -13,9 +13,12 @@
 
         <b-button v-if="false === broadcasting" variant="success" v-on:click="openModal">
             <b-icon v-if="openingModal" icon="arrow-clockwise" animation="spin"></b-icon>
-            <b-icon-camera-video-fill v-else></b-icon-camera-video-fill> Empezar a emitir
+            <b-icon-camera-video-fill v-else></b-icon-camera-video-fill> <span class="hide-375"><span class="hide-425">Empezar a</span> <span class="capitalize-425">emitir</span></span>
         </b-button>
-        <b-button v-else variant="danger" v-on:click="stopBroadcasting">Detener emisión</b-button>
+        <b-button v-else variant="danger" v-on:click="stopBroadcasting">
+            <span class="hidden show-425"><b-icon-camera-video-fill></b-icon-camera-video-fill></span>
+            <span class="hide-375"><span class="hide-425">Detener</span> <span class="capitalize-425">emisión</span></span>
+        </b-button>
 
         <b-modal id="app-broadcast-initializer-modal" ref="broadcast-initializer-modal" title="Empezar a emitir...">
             <section id="media-list-camera">

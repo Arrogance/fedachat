@@ -122,8 +122,8 @@
                 });
             },
             updateChatHeight: function() {
-                let fixedHeight = $('.chat-form').height() + $('#navbar').height() + $('.users-list').height();
-                this.chatHeight = $(window).height() - fixedHeight;
+                let fixedHeight = $('.chat-form').outerHeight() + $('#navbar').height() + $('.users-list').outerHeight();
+                this.chatHeight = $(window).height() - fixedHeight - 10;
             }
         },
         mounted: function() {

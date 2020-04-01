@@ -5,4 +5,19 @@
             text-shadow: 1px 1px 5px #000;
         }
     }
+
+    @media (max-width: 768px) {
+        .navbar-nav {
+            flex-direction: row;
+            .nav-item {
+                margin: 0 5px;
+            }
+
+            @media (max-width: 425px) {
+                & {
+                    text-align: center;
+                }
+            }
+        }
+    }
 }

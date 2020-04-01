@@ -2,7 +2,7 @@
     <section id="navbar">
         <b-navbar toggleable="lg" type="dark" variant="dark">
             <b-container fluid="">
-                <b-navbar-brand href="#">
+                <b-navbar-brand href="#" class="hide-375">
                     <h1>FedaChat</h1>
                 </b-navbar-brand>
 
@@ -11,11 +11,23 @@
                         <app-broadcast-initializer></app-broadcast-initializer>
                     </b-nav-item>
                     <b-nav-item>
-                        <b-button v-if="this.$root.user" v-text="this.$root.user.userName" @click="toggleModal('username-modal')"></b-button>
-                        <b-button v-else @click="toggleModal('username-modal')">Elegir un nick...</b-button>
+                        <b-button v-if="this.$root.user" @click="toggleModal('username-modal')">
+                            <span class="hide-375">{{ this.$root.user.userName }}</span>
+                            <span class="hidden show-375"><b-icon-people-circle></b-icon-people-circle></span>
+                        </b-button>
+                        <b-button v-else @click="toggleModal('username-modal')">
+                            <span class="hide-375">Elegir un nick...</span>
+                            <span class="hidden show-375"><b-icon-people-circle></b-icon-people-circle></span>
+                        </b-button>
                     </b-nav-item>
                     <b-nav-item>
                         <b-button @click="toggleModal('options-modal')"> <b-icon-gear></b-icon-gear> <span class="sr-only">Opciones</span></b-button>
+                    </b-nav-item>
+                    <b-nav-item class="hidden show-425" v-on:click="toggleChat">
+                        <b-button>
+                            <b-icon-chat-square-dots v-if="!chatShown"></b-icon-chat-square-dots>
+                            <b-icon-chat-square-dots-fill v-else></b-icon-chat-square-dots-fill>
+                        </b-button>
                     </b-nav-item>
                 </b-navbar-nav>
             </b-container>
@@ -62,7 +74,8 @@
                 userNameValidation: {
                     message: null
                 },
-                chatSoundEnabled: true
+                chatSoundEnabled: true,
+                chatShown: false,
             }
         },
         components: {
@@ -114,6 +127,10 @@
             },
             toggleModal(ref) {
                 this.$refs[ref].toggle('#toggle-btn')
+            },
+            toggleChat(event) {
+                this.$root.$emit('toggle_chat');
+                this.chatShown = !this.chatShown;
             }
         },
         watch: {
