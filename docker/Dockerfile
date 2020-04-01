@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY . .
-RUN npm install && npm run build
+RUN npm install --production
 
 EXPOSE 9000
 CMD [ "node", "-r", "esm", "server/index.js" ]
