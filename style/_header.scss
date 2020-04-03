@@ -1,5 +1,10 @@
 #navbar {
     height: 70px;
+    @media (max-width: 425px) {
+        & {
+            height: 60px;
+        }
+    }
     .navbar-brand {
         h1 {
             font-size: 1.3em;

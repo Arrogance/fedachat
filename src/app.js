@@ -31,7 +31,6 @@ const App = new Vue({
     data: {
         socket: socket,
         users: [],
-        userName: null,
         user: {
             userName: null,
             streamId: null,
@@ -86,7 +85,6 @@ const App = new Vue({
         });
 
         this.socket.on('user_details', function(user) {
-            _this.userName = user.userName;
             _this.user = user;
         });
 

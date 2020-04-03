@@ -91,7 +91,7 @@
                 let alreadyExists = false;
                 let _this = this;
                 this.$root.users.forEach(function(user) {
-                    if (user.userName === _this.userName) {
+                    if (user.userName === _this.userName && user.userName !== _this.userName) {
                         alreadyExists = true;
                     }
                 });
@@ -114,7 +114,6 @@
                     oldUsername: oldUsername
                 });
 
-                this.userName = null;
                 this.setUserNameValidation();
             },
             setUserNameValidation(message) {
@@ -145,7 +144,6 @@
         },
         mounted() {
             this.chatSoundEnabled = this.$root.chatSoundEnabled;
-            this.userName = null;
         }
     }
 </script>
