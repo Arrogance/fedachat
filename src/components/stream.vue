@@ -115,13 +115,12 @@
 
             setInterval(function() {
                 let audioLevel = _this.stream.getAudioLevel();
-                console.log(audioLevel);
                 if (audioLevel > 0.2) {
                     _this.$refs.audioWave.classList.add('enabled');
                 } else {
                     _this.$refs.audioWave.classList.remove('enabled');
                 }
-            }, 5);
+            }, 10);
 
             this.client.on('mute-audio', function(stream) {
                 if (_this.streamId === stream.uid) {
