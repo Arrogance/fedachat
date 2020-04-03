@@ -28,7 +28,7 @@
             videoProfile: {
                 type: String,
                 default() {
-                    return '360p_4'
+                    return '480p_4'
                 }
             },
             videoProfileLow: {
@@ -60,8 +60,8 @@
         methods: {
             optionsInit: (options) => {
                 return {
-                    videoProfile: options.videoProfile.split(',')[0] || '360p_4',
-                    videoProfileLow: options.videoProfileLow.split(',')[0] || '360p_4',
+                    videoProfile: options.videoProfile.split(',')[0] || '480p_4',
+                    videoProfileLow: options.videoProfileLow.split(',')[0] || '480p_4',
                     channel: options.channel || "test",
                     transcode: options.transcode || "rtc",
                     attendeeMode: options.attendeeMode || "video",
