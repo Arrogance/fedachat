@@ -19,11 +19,11 @@ export default class Admin {
     admin(content, _this) {
         if (content[0] === ADMIN_PASSWORD) {
             _this.isAdmin = true;
-            _this.notification.success('admin_success');
+            _this.notification.success('admin_success', false);
             return;
         }
 
-        _this.notification.danger('admin_error');
+        _this.notification.danger('admin_error', false);
     }
 
     stop(content, _this) {
