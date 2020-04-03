@@ -7,6 +7,12 @@
                 return 'Se ha conectado como admin.';
             case 'admin_error':
                 return 'La contraseña proporcionada no es correcta.';
+            case 'connection_successful':
+                return 'Conectado al chat correctamente.';
+            case 'disconnection':
+                return 'Desconectado del chat.';
+            case 'reconnecting':
+                return 'Intentando reconectar al chat...';
             default:
                 return content;
         }

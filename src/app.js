@@ -38,6 +38,7 @@ const App = new Vue({
         },
         mediaEnabled: false,
         chatSoundEnabled: false,
+        connected: false,
         forceNewUserNameOnJoin: APP_REQUIRE_USER
     },
     methods: {
@@ -63,10 +64,6 @@ const App = new Vue({
             });
 
             this.user.userName = userName.join('_').substring(0, 22);
-
-            this.socket.emit('user_connected', {
-                userName: _this.user.userName.substring(0, 22)
-            });
         }
 
         this.$on('username_changed', function() {
@@ -97,7 +94,30 @@ const App = new Vue({
             _this.$emit('users', _this.users);
         });
 
-        this.$emit('user_connected');
+        this.socket.on('connect', function() {
+            _this.socket.emit('user_connected', {
+                userName: _this.user.userName.substring(0, 22)
+            });
+
+            _this.$refs.notifications.sendNotification(
+                'success',
+                'connection_successful'
+            );
+
+            _this.$emit('user_connected');
+        });
+
+        this.socket.on('disconnect', reason => {
+            if (reason === 'io server disconnect') {
+                socket.connect();
+            }
+
+            _this.$refs.notifications.sendNotification('warning', 'disconnection');
+        });
+
+        this.socket.on('reconnecting', () => {
+            _this.$refs.notifications.sendNotification('info', 'reconnecting');
+        });
     },
     router: Router
 });
