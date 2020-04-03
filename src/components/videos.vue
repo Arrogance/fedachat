@@ -60,8 +60,8 @@
         methods: {
             optionsInit: (options) => {
                 return {
-                    videoProfile: options.videoProfile.split(',')[0] || '720p_3',
-                    videoProfileLow: options.videoProfileLow.split(',')[0] || '720p_3',
+                    videoProfile: options.videoProfile.split(',')[0] || '480p_4',
+                    videoProfileLow: options.videoProfileLow.split(',')[0] || '480p_4',
                     channel: options.channel || "test",
                     transcode: options.transcode || "rtc",
                     attendeeMode: options.attendeeMode || "video",
