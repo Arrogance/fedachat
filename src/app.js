@@ -102,4 +102,11 @@ const App = new Vue({
     router: Router
 });
 
+const reloadFunction = function() {
+    location.reload();
+};
+
+Vue.config.errorHandler = reloadFunction;
+window.onerror = reloadFunction;
+
 export default App;
