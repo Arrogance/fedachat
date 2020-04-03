@@ -113,26 +113,26 @@
                 }
             }
 
-            let firstLog = false;
-            document.addEventListener('click', function() {
-                if (!firstLog) {
-                    firstLog = true;
-
-                    setInterval(function() {
-                        let audioLevel = _this.stream.getAudioLevel();
-                        if (!firstLog) {
-                            console.log('Instantiating audio view');
-                            firstLog = true;
-                        }
-
-                        if (_this.stream.getAudioLevel() > 0) {
-                            _this.$refs.audioWave.classList.add('enabled');
-                        } else {
-                            _this.$refs.audioWave.classList.remove('enabled');
-                        }
-                    }, 5);
-                }
-            });
+            // let firstLog = false;
+            // document.addEventListener('click', function() {
+            //     if (!firstLog) {
+            //         firstLog = true;
+            //
+            //         setInterval(function() {
+            //             let audioLevel = _this.stream.getAudioLevel();
+            //             if (!firstLog) {
+            //                 console.log('Instantiating audio view');
+            //                 firstLog = true;
+            //             }
+            //
+            //             if (_this.stream.getAudioLevel() > 0.001) {
+            //                 _this.$refs.audioWave.classList.add('enabled');
+            //             } else {
+            //                 _this.$refs.audioWave.classList.remove('enabled');
+            //             }
+            //         }, 5);
+            //     }
+            // });
 
             this.client.on('mute-audio', function(stream) {
                 if (_this.streamId === stream.uid) {
