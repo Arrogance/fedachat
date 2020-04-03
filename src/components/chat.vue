@@ -123,7 +123,7 @@
             },
             updateChatHeight: function() {
                 let fixedHeight = $('.chat-form').outerHeight() + $('#navbar').height() + $('.users-list').outerHeight();
-                this.chatHeight = $(window).height() - fixedHeight - 10;
+                this.chatHeight = $(window).height() - fixedHeight;
             }
         },
         mounted: function() {

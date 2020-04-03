@@ -99,9 +99,7 @@ const App = new Vue({
         });
 
         this.socket.on('connect', function() {
-            _this.socket.emit('user_connected', {
-                userName: _this.user.userName.substring(0, 22)
-            });
+            _this.socket.emit('user_connected', _this.user);
 
             _this.$refs.notifications.sendNotification(
                 'success',
