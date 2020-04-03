@@ -120,7 +120,7 @@
                 } else {
                     _this.$refs.audioWave.classList.remove('enabled');
                 }
-            }, 2500);
+            }, 500);
 
             this.client.on('mute-audio', function(stream) {
                 if (_this.streamId === stream.uid) {
