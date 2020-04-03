@@ -235,8 +235,7 @@
             }));
 
             this.client = AgoraRTC.createClient({
-                mode: this.clientOptions.transcode,
-                codec: this.clientOptions.codec,
+                mode: this.clientOptions.transcode
             });
 
             this.subscribeStreamEvents(this.client, this);
