@@ -99,7 +99,9 @@ module.exports = env => {
             new MiniCssExtractPlugin(),
             new Dotenv({
                 path: path.resolve(__dirname, '.env'),
-                systemvars: true
+                systemvars: true,
+                safe: true,
+                defaults: true
             })
         ]
     }

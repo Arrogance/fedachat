@@ -18,7 +18,7 @@ import HeaderComponent from './components/header.vue';
 import NotificationsComponent from './components/notifications.vue';
 import randomWords from 'random-words';
 
-import { SOCKET_ENDPOINT } from '../config';
+import { SOCKET_ENDPOINT, APP_REQUIRE_USER } from '../config';
 
 const socket = io(SOCKET_ENDPOINT);
 
@@ -39,7 +39,7 @@ const App = new Vue({
         },
         mediaEnabled: false,
         chatSoundEnabled: false,
-        forceNewUserNameOnJoin: true
+        forceNewUserNameOnJoin: APP_REQUIRE_USER
     },
     methods: {
         refreshUserConnected: function(users) {
