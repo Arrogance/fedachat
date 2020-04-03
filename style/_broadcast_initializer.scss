@@ -1,5 +1,12 @@
 #app-broadcast-initializer {
-
+    button {
+        //margin: 5px 0 0;
+        //@media (max-width: 425px) {
+        //    & {
+        //        margin: 5px 0 0;
+        //    }
+        //}
+    }
 }
 
 #app-broadcast-initializer-modal {
@@ -17,12 +24,23 @@
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 overflow: hidden;
-                display: inherit;
                 width: 130px;
+                display: block;
             }
             > svg:not(.b-iconstack) {
                 width: 35px;
                 height: 35px;
+            }
+
+            @media (max-width: 425px) {
+                & {
+                    width: 120px;
+                    height: 120px;
+
+                    span {
+                        width: 110px;
+                    }
+                }
             }
         }
     }

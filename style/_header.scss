@@ -1,4 +1,5 @@
 #navbar {
+    height: 70px;
     .navbar-brand {
         h1 {
             font-size: 1.3em;
@@ -6,17 +7,29 @@
         }
     }
 
-    @media (max-width: 768px) {
-        .navbar-nav {
-            flex-direction: row;
-            .nav-item {
-                margin: 0 5px;
+    @media (max-width: 425px) {
+        .btn {
+            line-height: 0.5;
+            padding: 0.175rem 0.5rem;
+            svg {
+                font-size: 100%;
             }
+        }
+    }
 
-            @media (max-width: 425px) {
-                & {
-                    text-align: center;
+    .navbar-nav {
+        @media (max-width: 768px) {
+            & {
+                flex-direction: row;
+                .nav-item {
+                    margin: 0 5px;
                 }
+            }
+        }
+
+        @media (max-width: 425px) {
+            & {
+                text-align: center;
             }
         }
     }
