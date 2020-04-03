@@ -2,6 +2,10 @@ import Vue from 'vue';
 import { Routes } from './routes';
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+import linkify from 'vue-linkify';
+
+Vue.directive('linkified', linkify);
+
 import '../style/app.scss';
 
 Vue.use(BootstrapVue);

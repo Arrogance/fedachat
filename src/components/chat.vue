@@ -33,7 +33,7 @@
                         </div>
                         <div v-else-if="message.type === 'chat'" :class="message.type">
                             <strong>{{ message.user.userName }}:</strong>
-                            <span>{{ message.content }}</span>
+                            <span v-linkified>{{ message.content }}</span>
                         </div>
                         <div v-else-if="message.type === 'start_broadcasting'" :class="message.type">
                             <span>
