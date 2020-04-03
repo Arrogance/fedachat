@@ -60,6 +60,44 @@
         visibility: hidden;
     }
 
+    .video-stream-audiowave {
+        font-size: 1.5em;
+        position: absolute;
+        right: 20px;
+        z-index: 9;
+        color: $white;
+        display: none;
+        @keyframes audioWaveAnimation {
+            0%   { opacity:1; }
+            50%  { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-o-keyframes audioWaveAnimation {
+            0%   { opacity:1; }
+            50%  { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-moz-keyframes audioWaveAnimation {
+            0%   { opacity:1; }
+            50%  { opacity:0; }
+            100% { opacity:1; }
+        }
+        @-webkit-keyframes audioWaveAnimation {
+            0%   { opacity:1; }
+            50%  { opacity:0; }
+            100% { opacity:1; }
+        }
+        & {
+            -webkit-animation: audioWaveAnimation 0.7s infinite;
+            -moz-animation: audioWaveAnimation 0.7s infinite;
+            -o-animation: audioWaveAnimation 0.7s infinite;
+            animation: audioWaveAnimation 0.7s infinite;
+        }
+        &.enabled {
+            display: block;
+        }
+    }
+
     &:hover {
         .video-stream-pause-audio, .video-stream-pause-video, .video-stream-fullscreen-video {
             visibility: visible;

@@ -16,6 +16,9 @@
         <span v-if="!ownStream && stream.video === true" class="video-stream-fullscreen-video" v-on:click="fullscreenToggle">
             <b-icon icon="fullscreen"></b-icon>
         </span>
+        <span class="video-stream-audiowave" ref="audioWave">
+            <b-icon-soundwave></b-icon-soundwave>
+        </span>
     </div>
 </template>
 
@@ -109,6 +112,16 @@
                     playerDom.classList.add('audio-only');
                 }
             }
+
+            setInterval(function() {
+                let audioLevel = _this.stream.getAudioLevel();
+                console.log(audioLevel);
+                if (audioLevel > 0.2) {
+                    _this.$refs.audioWave.classList.add('enabled');
+                } else {
+                    _this.$refs.audioWave.classList.remove('enabled');
+                }
+            }, 5);
 
             this.client.on('mute-audio', function(stream) {
                 if (_this.streamId === stream.uid) {
