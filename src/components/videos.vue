@@ -28,7 +28,7 @@
             videoProfile: {
                 type: String,
                 default() {
-                    return '720p_3'
+                    return '480p_4'
                 }
             },
             videoProfileLow: {
@@ -66,6 +66,7 @@
                     transcode: options.transcode || "rtc",
                     attendeeMode: options.attendeeMode || "video",
                     baseMode: options.baseMode || "avc",
+                    codec: "vp8",
                     uid: undefined, // In default it is dynamically generated
                     resolution: undefined,
                 }
@@ -234,7 +235,8 @@
             }));
 
             this.client = AgoraRTC.createClient({
-                mode: this.clientOptions.transcode
+                mode: this.clientOptions.transcode,
+                codec: this.clientOptions.codec,
             });
 
             this.subscribeStreamEvents(this.client, this);
