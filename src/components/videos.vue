@@ -66,7 +66,7 @@
                     transcode: options.transcode || "rtc",
                     attendeeMode: options.attendeeMode || "video",
                     baseMode: options.baseMode || "avc",
-                    codec: "vp8",
+                    codec: "h264",
                     uid: undefined, // In default it is dynamically generated
                     resolution: undefined,
                 }
