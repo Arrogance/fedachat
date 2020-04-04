@@ -122,7 +122,9 @@
                         _this.$refs.audioWave.classList.add('enabled');
                     }
                 } else {
-                    _this.$refs.audioWave.classList.remove('enabled');
+                    if (_this.$refs.audioWave) {
+                        _this.$refs.audioWave.classList.remove('enabled');
+                    }
                 }
             }, 500);
 
