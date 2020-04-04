@@ -156,10 +156,6 @@
                     });
                 });
 
-                client.on("stream-removed", function(evt) {
-                    _this.removeStream(evt.uid, _this);
-                });
-
                 client.on("peer-leave", function(evt) {
                     let id = evt.uid;
 
