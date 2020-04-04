@@ -138,7 +138,7 @@
                 this.chatShown = !this.chatShown;
             },
             toggleDarkMode() {
-                this.$root.$refs.app.classList.toggle('dark');
+                document.getElementsByTagName("body").classList.toggle('dark');
                 this.darkMode = !this.darkMode;
             }
         },
