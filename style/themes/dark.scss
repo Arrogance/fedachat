@@ -1,0 +1,16 @@
+#app.dark {
+    color: $white;
+    background-color: darken($dark, 8);
+    scrollbar-color: dark;
+    #index {
+        .right-column {
+            background-color: darken($dark, 4);
+            border-color: darken($light, 8);
+        }
+    }
+    #app-chat {
+        .chat-form {
+            background-color: darken($dark, 6);
+        }
+    }
+}

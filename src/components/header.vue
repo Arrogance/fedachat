@@ -23,6 +23,11 @@
                     <b-nav-item>
                         <b-button @click="toggleModal('options-modal')"> <b-icon-gear></b-icon-gear> <span class="sr-only">Opciones</span></b-button>
                     </b-nav-item>
+                    <b-nav-item>
+                        <b-button @click="toggleDarkMode" :variant="darkMode ? 'warning' : 'secondary'">
+                            <b-icon-moon></b-icon-moon>
+                        </b-button>
+                    </b-nav-item>
                     <b-nav-item class="hidden show-425" v-on:click="toggleChat">
                         <b-button :variant="chatShown ? 'info' : 'secondary'">
                             <b-icon-chat-square-dots v-if="!chatShown"></b-icon-chat-square-dots>
@@ -76,6 +81,7 @@
                 },
                 chatSoundEnabled: true,
                 chatShown: false,
+                darkMode: false
             }
         },
         components: {
@@ -130,6 +136,10 @@
             toggleChat(event) {
                 this.$root.$emit('toggle_chat');
                 this.chatShown = !this.chatShown;
+            },
+            toggleDarkMode() {
+                this.$root.$refs.app.classList.toggle('dark');
+                this.darkMode = !this.darkMode;
             }
         },
         watch: {
