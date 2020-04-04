@@ -124,7 +124,7 @@
                 } else {
                     _this.$refs.audioWave.classList.remove('enabled');
                 }
-            }, 1000);
+            }, 500);
 
             if (this.$root.audioEnabled === true) {
                 audioWaveInterval();
