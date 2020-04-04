@@ -87,8 +87,6 @@
                                     framerate: lowStreamParam[2],
                                     bitrate: lowStreamParam[3]
                                 });
-                                // Create localstream
-                                // client.enableDualStream();
                                 resolve(uid);
                             },
                             err => {
