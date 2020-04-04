@@ -129,6 +129,5 @@ const reloadFunction = function() {
 };
 
 Vue.config.errorHandler = reloadFunction;
-window.onerror = reloadFunction;
 
 export default App;
