@@ -15,6 +15,14 @@ body.dark {
     color: darken($white, 6);
     background-color: darken($dark, 8);
     scrollbar-color: dark;
+
+    a {
+        color: lighten($warning, 10);
+        &:hover {
+            color: $warning;
+        }
+    }
+
     #index {
         .right-column {
             background-color: darken($dark, 4);
@@ -26,6 +34,10 @@ body.dark {
             border-color: lighten($dark, 2);
         }
         .chat-messages {
+            strong, b {
+                color: #e4d4a5;
+            }
+
             &::-webkit-scrollbar {
                 width: 1em;
             }
