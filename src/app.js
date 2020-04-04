@@ -41,6 +41,7 @@ const App = new Vue({
             uuid: null
         },
         mediaEnabled: false,
+        audioEnabled: false,
         chatSoundEnabled: false,
         connected: false,
         forceNewUserNameOnJoin: APP_REQUIRE_USER

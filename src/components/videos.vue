@@ -293,6 +293,7 @@
                         stream.resume()
                     });
 
+                    _this.$root.audioEnabled = true;
                     event.target.removeEventListener('click', clickListener);
                 }
             });

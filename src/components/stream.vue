@@ -113,26 +113,31 @@
                 }
             }
 
-            // let firstLog = false;
-            // document.addEventListener('click', function() {
-            //     if (!firstLog) {
-            //         firstLog = true;
-            //
-            //         setInterval(function() {
-            //             let audioLevel = _this.stream.getAudioLevel();
-            //             if (!firstLog) {
-            //                 console.log('Instantiating audio view');
-            //                 firstLog = true;
-            //             }
-            //
-            //             if (_this.stream.getAudioLevel() > 0.001) {
-            //                 _this.$refs.audioWave.classList.add('enabled');
-            //             } else {
-            //                 _this.$refs.audioWave.classList.remove('enabled');
-            //             }
-            //         }, 5);
-            //     }
-            // });
+            const audioWaveInterval = () => setInterval(function() {
+                let audioLevel = _this.stream.getAudioLevel();
+
+                let transformedAudioLevel = audioLevel * 100;
+                if (transformedAudioLevel > 0.75) {
+                    if (!_this.$refs.audioWave.classList.contains('enabled')) {
+                        _this.$refs.audioWave.classList.add('enabled');
+                    }
+                } else {
+                    _this.$refs.audioWave.classList.remove('enabled');
+                }
+            }, 1000);
+
+            if (this.$root.audioEnabled === true) {
+                audioWaveInterval();
+            } else {
+                let firstLog = false;
+                document.addEventListener('click', function() {
+                    if (!firstLog) {
+                        firstLog = true;
+
+                        audioWaveInterval();
+                    }
+                });
+            }
 
             this.client.on('mute-audio', function(stream) {
                 if (_this.streamId === stream.uid) {
