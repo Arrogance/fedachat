@@ -7,6 +7,7 @@ const io = require('socket.io')(http);
 
 import Admin from './admin';
 import Notification from './notification';
+import AgoraToken from './agora_token';
 
 import UserModel from './models/user';
 import MessageModel from './models/message';
@@ -21,6 +22,8 @@ let messages = [];
 io.on('connection', socket => {
     let admin = new Admin(socket, io, users);
     let notification = new Notification(socket, io);
+
+    const token = new AgoraToken();
 
     let user;
 
@@ -48,18 +51,19 @@ io.on('connection', socket => {
     socket.on('user_connected', function(event) {
         user = new UserModel(uuidv4(), event.userName);
         user.addSocket(socket.id);
+        user.addStreamToken(token.generateToken(user.uuid));
+        user.addStreamId(event.streamId);
 
         users.push(user);
         admin.user = user;
 
-        let message = {
-            user: user,
-            type: 'connection'
-        };
+        let message = new MessageModel(messages.length, 'connection');
+        message.setUser(user);
 
+        messages.push(message);
         io.emit('message', message);
-        io.emit('users', users);
 
+        io.emit('users', users);
         admin.users = users;
 
         socket.emit('user_details', user);

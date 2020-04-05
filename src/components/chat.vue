@@ -116,6 +116,33 @@
 
                 this.message = '';
             },
+            sendMentions: function(message) {
+                if (message.type !== 'chat') {
+                    return;
+                }
+
+                let mentions = message.content.match(/(@[\w]+)/gm);
+                if (!mentions || mentions.length === 0) {
+                    return;
+                }
+
+                let _this = this;
+                mentions.forEach(function(userName) {
+                    let realUserName = userName.substring(1);
+                    if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
+                        message.content = message.content.replace(userName, '<strong>' + userName + '</strong>');
+
+                        SoundsComponent.playNotificationSound();
+                        _this.$root.$refs.notifications.sendNotification(
+                            'success',
+                            {
+                                type: 'chat_mention',
+                                content: message.user.userName
+                            }
+                        );
+                    }
+                });
+            },
             userNameModified: function(event) {
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
@@ -140,34 +167,15 @@
             });
 
             this.$root.socket.on('message', (message) => {
+                this.sendMentions(message);
                 this.messages.push(message);
 
                 if (this.messages.length > maxMessagesOnChatBuffer) {
                     this.messages.shift();
                 }
 
-                if (message.type === 'chat' && message.content[0] === '@') {
-                    let nickname = message.content.substring(1);
-
-                    if (this.$root.user.userName.toLowerCase()  === nickname.trim().toLowerCase()) {
-                        message.content = '<strong>' + message.content + '</strong>';
-
-                        if (this.$root.chatSoundEnabled) {
-                            SoundsComponent.playNotificationSound();
-                        } else {
-                            this.$root.$refs.notifications.sendNotification(
-                                'success',
-                                {
-                                    type: 'chat_mention',
-                                    content: message.user.userName
-                                }
-                            );
-                        }
-                    }
-                } else {
-                    if (this.$root.chatSoundEnabled) {
-                        SoundsComponent.playBeepSound();
-                    }
+                if (this.$root.chatSoundEnabled) {
+                    SoundsComponent.playBeepSound();
                 }
 
                 let messageDom = $('.chat-messages');

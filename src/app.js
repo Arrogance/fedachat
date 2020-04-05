@@ -38,6 +38,7 @@ const App = new Vue({
         user: {
             userName: null,
             streamId: null,
+            streamToken: null,
             uuid: null
         },
         mediaEnabled: false,
@@ -49,6 +50,7 @@ const App = new Vue({
     methods: {
         refreshUserConnected: function(users) {
             this.users = users;
+            this.$emit('users', this.users);
         }
     },
     mounted() {
@@ -88,6 +90,7 @@ const App = new Vue({
 
         this.socket.on('user_details', function(user) {
             _this.user = user;
+            _this.$emit('user_stream_token', user.streamToken);
         });
 
         this.socket.on('user_disconnected', function(user) {
@@ -95,11 +98,8 @@ const App = new Vue({
         });
 
         this.socket.on('users', this.refreshUserConnected);
-        this.socket.on('users', function() {
-            _this.$emit('users', _this.users);
-        });
-
         this.socket.on('connect', function() {
+            console.log(_this.user.streamId);
             _this.socket.emit('user_connected', _this.user);
 
             _this.$refs.notifications.sendNotification(

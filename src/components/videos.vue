@@ -13,8 +13,7 @@
     import {
         AGORA_SHARE_ID,
         AGORA_RESOLUTION_ARR,
-        AGORA_APP_ID,
-        AGORA_TOKEN
+        AGORA_APP_ID
     } from '../../config';
     import {log} from '../plugins/logger';
 
@@ -47,8 +46,7 @@
                 client: null,
                 clientUid: null,
                 clientOptions: {
-                    key: AGORA_APP_ID,
-                    token: AGORA_TOKEN
+                    key: AGORA_APP_ID
                 },
                 streamList: [],
                 videoDevice: null,
@@ -67,7 +65,6 @@
                     attendeeMode: options.attendeeMode || "video",
                     baseMode: options.baseMode || "avc",
                     codec: "h264",
-                    uid: undefined, // In default it is dynamically generated
                     resolution: undefined,
                 }
             },
@@ -234,8 +231,12 @@
 
             this.subscribeStreamEvents(this.client, this);
 
-            this.clientInit(this.client, this.clientOptions).then(uid => {
-                this.clientUid = uid;
+            this.$root.$on('user_stream_token', function(streamToken) {
+                _this.clientOptions.token = streamToken;
+                _this.clientOptions.uid = _this.$root.user.uuid;
+                _this.clientInit(_this.client, _this.clientOptions).then(uid => {
+                    _this.clientUid = uid;
+                });
             });
 
             this.$root.socket.on('stop_streaming', function(user) {
