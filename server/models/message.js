@@ -1,5 +1,6 @@
 export default class Message {
-    constructor(type, content) {
+    constructor(id, type, content) {
+        this.id = id;
         this.type = type;
         this.content = content;
     }

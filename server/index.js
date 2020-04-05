@@ -19,8 +19,8 @@ let users = [];
 let messages = [];
 
 io.on('connection', socket => {
-    let admin = new Admin(socket, io, users),
-        notification = new Notification(socket, io);
+    let admin = new Admin(socket, io, users);
+    let notification = new Notification(socket, io);
 
     let user;
 
@@ -31,7 +31,7 @@ io.on('connection', socket => {
     });
 
     socket.on('message', function(event) {
-        let message = new MessageModel(event.type, event.content);
+        let message = new MessageModel(messages.length, event.type, event.content);
 
         if (event.user) {
             users.forEach(function(value) {
