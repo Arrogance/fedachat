@@ -122,7 +122,7 @@
                 }
 
                 let mentions = message.content.match(/(@[\w]+)/gm);
-                if (mentions.length === 0) {
+                if (!mentions || mentions.length === 0) {
                     return;
                 }
 
