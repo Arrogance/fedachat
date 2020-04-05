@@ -11,4 +11,8 @@ export default class User {
     addStreamId(streamId) {
         this.streamId = streamId;
     }
+
+    addStreamToken(streamToken) {
+        this.streamToken = streamToken;
+    }
 }

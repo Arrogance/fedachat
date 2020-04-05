@@ -38,6 +38,7 @@ const App = new Vue({
         user: {
             userName: null,
             streamId: null,
+            streamToken: null,
             uuid: null
         },
         mediaEnabled: false,
@@ -88,6 +89,7 @@ const App = new Vue({
 
         this.socket.on('user_details', function(user) {
             _this.user = user;
+            _this.$emit('user_stream_token', user.streamToken);
         });
 
         this.socket.on('user_disconnected', function(user) {
