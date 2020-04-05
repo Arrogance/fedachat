@@ -71,7 +71,7 @@
 
 <script>
     import BroadcastInitializerComponent from '../components/broadcast_initializer.vue'
-
+    import dataStorage from '../plugins/data_storage.js'
     export default {
         data() {
             return {
@@ -81,7 +81,7 @@
                 },
                 chatSoundEnabled: true,
                 chatShown: false,
-                darkMode: JSON.parse(localStorage.getItem('darkMode')) ? JSON.parse(localStorage.getItem('darkMode')) : false
+                darkMode:  dataStorage.get('darkMode')
             }
         },
         components: {
@@ -140,7 +140,7 @@
             toggleDarkMode() {
                 document.getElementsByTagName("body")[0].classList.toggle('dark');
                 this.darkMode = !this.darkMode;
-                localStorage.setItem('darkMode', this.darkMode);
+                dataStorage.set('darkMode', this.darkMode);
             }
         },
         watch: {
@@ -155,7 +155,7 @@
         },
         mounted() {
             this.chatSoundEnabled = this.$root.chatSoundEnabled;
-            if (this.darkMode) document.getElementsByTagName("body")[0].classList.toggle('dark');
+            if (dataStorage.get('darkMode')) document.getElementsByTagName("body")[0].classList.toggle('dark');
         }
     }
 </script>
