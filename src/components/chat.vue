@@ -3,7 +3,7 @@
         <b-container class="p-0">
             <b-row class="pr-2 pl-3">
                 <b-col cols="12" class="users-list">
-                    <h5>Usuarios conectados:</h5>
+                    <h5><b-icon-people flip-h></b-icon-people> Usuarios conectados:</h5>
                     <b-badge variant="secondary" class="p-1 ml-1 mr-1" v-for="user in this.$root.users" v-bind:key="user.uuid">
                         {{ user.userName }}
                     </b-badge>
