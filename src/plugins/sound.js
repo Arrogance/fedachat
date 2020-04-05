@@ -1,5 +1,4 @@
 import { Howl } from 'howler';
-import App from '../app.js';
 
 export default {
     playBeepSound: function() {
@@ -8,6 +7,15 @@ export default {
             volume: 0.2
         });
 
-        App.$data.chatSoundEnabled && sound.play();
+        sound.play();
+    },
+
+    playNotificationSound: function() {
+        let sound = new Howl({
+            src: ['/sounds/notification.wav'],
+            volume: 0.2
+        });
+
+        sound.play();
     }
 };

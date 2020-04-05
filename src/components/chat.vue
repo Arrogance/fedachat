@@ -33,7 +33,7 @@
                         </div>
                         <div v-else-if="message.type === 'chat'" :class="message.type">
                             <strong>{{ message.user.userName }}:</strong>
-                            <span v-linkified>{{ message.content }}</span>
+                            <span v-html="message.content" v-linkified></span>
                         </div>
                         <div v-else-if="message.type === 'start_broadcasting'" :class="message.type">
                             <span>
@@ -146,8 +146,29 @@
                     this.messages.shift();
                 }
 
-                if (this.$root.chatSoundEnabled) {
-                    SoundsComponent.playBeepSound();
+                if (message.type === 'chat' && message.content[0] === '@') {
+                    let nickname = message.content.substring(1);
+
+                    if (this.$root.user.userName === nickname.trim()) {
+                        message.content = '<strong>' + message.content + '</strong>';
+
+                        if (this.$root.chatSoundEnabled) {
+                            SoundsComponent.playNotificationSound();
+                        } else {
+                            console.log(message);
+                            this.$root.$refs.notifications.sendNotification(
+                                'success',
+                                {
+                                    type: 'chat_mention',
+                                    content: message.user.userName
+                                }
+                            );
+                        }
+                    }
+                } else {
+                    if (this.$root.chatSoundEnabled) {
+                        SoundsComponent.playBeepSound();
+                    }
                 }
 
                 let messageDom = $('.chat-messages');

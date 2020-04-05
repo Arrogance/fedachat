@@ -2,7 +2,8 @@
 
 <script>
     const defaultMessages = function(content) {
-        switch(content) {
+        let message = typeof content === "string" ? content : content.type;
+        switch(message) {
             case 'admin_success':
                 return 'Se ha conectado como admin.';
             case 'admin_error':
@@ -13,6 +14,8 @@
                 return 'Desconectado del chat.';
             case 'reconnecting':
                 return 'Intentando reconectar al chat...';
+            case 'chat_mention':
+                return content.content + ' te ha mencionado en el chat.';
             default:
                 return content;
         }
