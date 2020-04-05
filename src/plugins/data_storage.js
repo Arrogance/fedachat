@@ -1,21 +1,11 @@
-import { Cookies } from 'js-cookie';
-
 export default {
-    localStorageEnabled: function() {
-        return Modernizr.localstorage;
+    constructor(key) {
+        this.provider = Modernizr.localstorage ? new LocalStorage(key) : new CookieStorage(key);
     },
-    get: function(key) {
-        if (this.localStorageEnabled()) {
-            return JSON.parse(localStorage.getItem(key));
-        }
-
-        return Cookies.get(key);
+    get: function() {
+        return this.provider.get;
     },
     set: function(key, enabled) {
-        if (this.localStorageEnabled()) {
-            localStorage.setItem(key, enabled);
-        } else {
-            Cookies.set(key, enabled);
-        }
+        this.provider.set(key, enabled);
     }
 };
