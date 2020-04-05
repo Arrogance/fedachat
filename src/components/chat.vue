@@ -149,13 +149,12 @@
                 if (message.type === 'chat' && message.content[0] === '@') {
                     let nickname = message.content.substring(1);
 
-                    if (this.$root.user.userName === nickname.trim()) {
+                    if (this.$root.user.userName.toLowerCase()  === nickname.trim().toLowerCase()) {
                         message.content = '<strong>' + message.content + '</strong>';
 
                         if (this.$root.chatSoundEnabled) {
                             SoundsComponent.playNotificationSound();
                         } else {
-                            console.log(message);
                             this.$root.$refs.notifications.sendNotification(
                                 'success',
                                 {
