@@ -52,18 +52,18 @@ io.on('connection', socket => {
         user = new UserModel(uuidv4(), event.userName);
         user.addSocket(socket.id);
         user.addStreamToken(token.generateToken(user.uuid));
+        user.addStreamId(event.streamId);
 
         users.push(user);
         admin.user = user;
 
-        let message = {
-            user: user,
-            type: 'connection'
-        };
+        let message = new MessageModel(messages.length, 'connection');
+        message.setUser(user);
 
+        messages.push(message);
         io.emit('message', message);
-        io.emit('users', users);
 
+        io.emit('users', users);
         admin.users = users;
 
         socket.emit('user_details', user);

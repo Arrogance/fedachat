@@ -167,6 +167,7 @@
             });
 
             this.$root.socket.on('message', (message) => {
+                console.log(message);
                 this.sendMentions(message);
                 this.messages.push(message);
 
