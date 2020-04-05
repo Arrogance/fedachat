@@ -63,11 +63,13 @@ body.dark {
             }
         }
     }
-    .modal-dialog {
+    .modal-header {
         h5 {
             color: black;
         }
-        .custom-control-label {
+    }
+    .modal-body {
+        label {
             color: black;
         }
     }

@@ -81,7 +81,7 @@
                 },
                 chatSoundEnabled: true,
                 chatShown: false,
-                darkMode: false
+                darkMode: JSON.parse(localStorage.getItem('darkMode')) ? JSON.parse(localStorage.getItem('darkMode')) : false
             }
         },
         components: {
@@ -140,6 +140,7 @@
             toggleDarkMode() {
                 document.getElementsByTagName("body")[0].classList.toggle('dark');
                 this.darkMode = !this.darkMode;
+                localStorage.setItem('darkMode', this.darkMode);
             }
         },
         watch: {
@@ -154,6 +155,7 @@
         },
         mounted() {
             this.chatSoundEnabled = this.$root.chatSoundEnabled;
+            if (this.darkMode) document.getElementsByTagName("body")[0].classList.toggle('dark');
         }
     }
 </script>
