@@ -20,6 +20,7 @@ Vue.use(VueRouter);
 
 import HeaderComponent from './components/header.vue';
 import NotificationsComponent from './components/notifications.vue';
+import Storage from './plugins/storage/storage';
 import randomWords from 'random-words';
 
 import { SOCKET_ENDPOINT, APP_REQUIRE_USER } from '../config';
@@ -43,7 +44,7 @@ const App = new Vue({
         },
         mediaEnabled: false,
         audioEnabled: false,
-        chatSoundEnabled: false,
+        chatSoundEnabled: Storage.get('chatSoundEnabled', false),
         connected: false,
         forceNewUserNameOnJoin: APP_REQUIRE_USER
     },
@@ -102,11 +103,6 @@ const App = new Vue({
             console.log(_this.user.streamId);
             _this.socket.emit('user_connected', _this.user);
 
-            _this.$refs.notifications.sendNotification(
-                'success',
-                'connection_successful'
-            );
-
             _this.$emit('user_connected');
         });
 
@@ -120,6 +116,13 @@ const App = new Vue({
 
         this.socket.on('reconnecting', () => {
             _this.$refs.notifications.sendNotification('info', 'reconnecting');
+        });
+
+        this.socket.on('reconnect', () => {
+            _this.$refs.notifications.sendNotification(
+                'success',
+                'connection_successful'
+            );
         });
     },
     router: Router

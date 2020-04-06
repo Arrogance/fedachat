@@ -130,6 +130,7 @@
             },
             onChatSoundEnabled: function() {
                 this.$root.chatSoundEnabled = this.chatSoundEnabled;
+                Storage.set('chatSoundEnabled', this.$root.chatSoundEnabled);
             },
             toggleModal(ref) {
                 this.$refs[ref].toggle('#toggle-btn')
