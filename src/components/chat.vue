@@ -28,7 +28,7 @@
                         <div v-else-if="message.type === 'username_changed'" :class="message.type">
                             <span>
                                 <b-icon-people flip-h></b-icon-people>
-                                <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> ahora se llama <strong>{{ message.content }}</strong>.
+                                <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> ahora se llama <strong v-on:click="mentionUserName(message.content)" class="cursor pointer">{{ message.content }}</strong>.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'chat'" :class="message.type">
