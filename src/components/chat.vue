@@ -118,15 +118,16 @@
             },
             sendMentions: function(message) {
                 if (message.type !== 'chat') {
-                    return;
+                    return false;
                 }
 
                 let mentions = message.content.match(/(@[\w]+)/gm);
                 if (!mentions || mentions.length === 0) {
-                    return;
+                    return false;
                 }
 
                 let _this = this;
+                let isMention = false;
                 mentions.forEach(function(userName) {
                     let realUserName = userName.substring(1);
                     _this.$root.users.forEach(function(user) {
@@ -142,10 +143,14 @@
                                         content: message.user.userName
                                     }
                                 );
+
+                                isMention = true;
                             }
                         }
                     });
                 });
+
+                return isMention;
             },
             userNameModified: function() {
                 this.$root.socket.emit('message', {
@@ -181,14 +186,14 @@
             });
 
             this.$root.socket.on('message', (message) => {
-                this.sendMentions(message);
+                let isMention = this.sendMentions(message);
                 this.messages.push(message);
 
                 if (this.messages.length > maxMessagesOnChatBuffer) {
                     this.messages.shift();
                 }
 
-                if (this.$root.chatSoundEnabled) {
+                if (this.$root.chatSoundEnabled && false === isMention) {
                     SoundsComponent.playBeepSound();
                 }
 
