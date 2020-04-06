@@ -47,13 +47,7 @@ module.exports = env => {
             rules: [
                 {
                     test: /\.s[ac]ss$/i,
-                    use: [
-                        env.NODE_ENV === 'production'
-                            ? 'style-loader'
-                            : MiniCssExtractPlugin.loader,
-                        'css-loader',
-                        'sass-loader'
-                    ]
+                    use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
                 },
                 {
                     test: /\.css$/,
