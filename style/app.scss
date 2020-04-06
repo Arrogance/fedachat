@@ -33,6 +33,12 @@ body {
     display: none;
 }
 
+.cursor {
+    &.pointer {
+        cursor: pointer;
+    }
+}
+
 @media (max-width: 425px) {
     .hide-425 {
         display: none;

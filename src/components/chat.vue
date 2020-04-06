@@ -4,7 +4,7 @@
             <b-row class="pr-2 pl-3">
                 <b-col cols="12" class="users-list">
                     <h5><b-icon-people flip-h></b-icon-people> Usuarios conectados:</h5>
-                    <b-badge variant="secondary" class="p-1 ml-1 mr-1" v-for="user in this.$root.users" v-bind:key="user.uuid">
+                    <b-badge variant="secondary" class="p-1 ml-1 mr-1 cursor pointer" v-for="user in this.$root.users" v-bind:key="user.uuid" v-on:click="mentionUserName(user.userName)">
                         {{ user.userName }}
                     </b-badge>
                 </b-col>
@@ -16,41 +16,41 @@
                         <div v-if="message.type === 'connection'" :class="message.type">
                             <span>
                                 <b-icon-forward-fill></b-icon-forward-fill>
-                                <strong>{{ message.user.userName }}</strong> se ha conectado.
+                                <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> se ha conectado.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'disconnection'" :class="message.type">
                             <span>
                                 <b-icon-forward flip-h></b-icon-forward>
-                                <strong>{{ message.user.userName }}</strong> se ha desconectado.
+                                <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> se ha desconectado.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'username_changed'" :class="message.type">
                             <span>
                                 <b-icon-people flip-h></b-icon-people>
-                                <strong>{{ message.user.userName }}</strong> ahora se llama <strong>{{ message.content }}</strong>.
+                                <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> ahora se llama <strong>{{ message.content }}</strong>.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'chat'" :class="message.type">
-                            <strong>{{ message.user.userName }}:</strong>
+                            <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}:</strong>
                             <span v-html="message.content" v-linkified></span>
                         </div>
                         <div v-else-if="message.type === 'start_broadcasting'" :class="message.type">
                             <span>
                                 <b-icon-camera-video-fill></b-icon-camera-video-fill>
-                               <strong>{{ message.user.userName }}</strong> ha comenzado a emitir.
+                               <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> ha comenzado a emitir.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'stop_broadcasting'" :class="message.type">
                             <span>
                                 <b-icon-camera-video flip-h></b-icon-camera-video>
-                                <strong>{{ message.user.userName }}</strong> ha dejado de emitir.
+                                <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> ha dejado de emitir.
                             </span>
                         </div>
                         <div v-else-if="message.type === 'admin_stop_broadcasting'" :class="message.type">
                             <span>
                                 <b-icon-camera-video flip-h></b-icon-camera-video>
-                                <strong>{{ message.user.userName }}</strong> ha cerrado la retransmisión de {{ message.content }}.
+                                <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> ha cerrado la retransmisión de {{ message.content }}.
                             </span>
                         </div>
                         <div v-else :class="message.type">
@@ -64,7 +64,7 @@
                 <b-form v-on:submit.prevent="sendMessage">
                     <div class="chat-input">
                         <div class="message_input_wrapper">
-                            <b-form-input class="message_input" v-model="message" placeholder="Type your message here..." />
+                            <b-form-input ref="chat-input" class="message_input" v-model="message" placeholder="Type your message here..." />
                         </div>
                     </div>
                 </b-form>
@@ -129,21 +129,25 @@
                 let _this = this;
                 mentions.forEach(function(userName) {
                     let realUserName = userName.substring(1);
-                    if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
-                        message.content = message.content.replace(userName, '<strong>' + userName + '</strong>');
+                    _this.$root.users.forEach(function(user) {
+                        if(user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
+                            message.content = message.content.replace(userName, '<strong>' + userName + '</strong>');
 
-                        SoundsComponent.playNotificationSound();
-                        _this.$root.$refs.notifications.sendNotification(
-                            'success',
-                            {
-                                type: 'chat_mention',
-                                content: message.user.userName
+                            if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
+                                SoundsComponent.playNotificationSound();
+                                _this.$root.$refs.notifications.sendNotification(
+                                    'success',
+                                    {
+                                        type: 'chat_mention',
+                                        content: message.user.userName
+                                    }
+                                );
                             }
-                        );
-                    }
+                        }
+                    });
                 });
             },
-            userNameModified: function(event) {
+            userNameModified: function() {
                 this.$root.socket.emit('message', {
                     user: this.$root.user,
                     type: 'username_changed',
@@ -153,6 +157,16 @@
             updateChatHeight: function() {
                 let fixedHeight = $('.chat-form').outerHeight() + $('#navbar').height() + $('.users-list').outerHeight();
                 this.chatHeight = $(window).height() - fixedHeight;
+            },
+            mentionUserName: function(userName) {
+                let message = '@'+userName+': ';
+                if (this.message.length === 0) {
+                    this.message = message;
+                } else {
+                    this.message += ' '.message;
+                }
+
+                this.$refs['chat-input'].focus();
             }
         },
         mounted: function() {
