@@ -19,7 +19,7 @@
         <span class="video-stream-audiowave" ref="audioWave">
             <b-icon-soundwave></b-icon-soundwave>
         </span>
-        <b-progress ref="streamVolume" v-on:click="changeStreamVolume" class="video-stream-volume-bar" :value="streamVolume"></b-progress>
+        <b-progress v-if="!ownStream" ref="streamVolume" v-on:click="changeStreamVolume" class="video-stream-volume-bar" :value="streamVolume"></b-progress>
     </div>
 </template>
 
@@ -109,7 +109,9 @@
                         _this.updateStreamVolume(event);
                     };
 
-                    _this.$refs['streamVolume'].$el.addEventListener('click', _this.changeStreamVolume);
+                    if (!_this.ownStream) {
+                        _this.$refs['streamVolume'].$el.addEventListener('click', _this.changeStreamVolume);
+                    }
                 }
             });
 
