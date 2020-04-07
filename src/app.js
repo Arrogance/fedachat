@@ -100,9 +100,7 @@ const App = new Vue({
 
         this.socket.on('users', this.refreshUserConnected);
         this.socket.on('connect', function() {
-            console.log(_this.user.streamId);
             _this.socket.emit('user_connected', _this.user);
-
             _this.$emit('user_connected');
         });
 

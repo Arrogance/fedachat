@@ -60,6 +60,21 @@
         visibility: hidden;
     }
 
+    .video-stream-volume-bar {
+        position: absolute;
+        z-index: 9;
+        top: 12px;
+        right: 55px;
+        height: 15px;
+        background-color: rgba($black, 0.5);
+        width: 20%;
+        cursor: pointer;
+        visibility: hidden;
+        .progress-bar {
+            background-color: $white;
+        }
+    }
+
     .video-stream-audiowave {
         font-size: 1.8em;
         position: absolute;
@@ -99,7 +114,7 @@
     }
 
     &:hover {
-        .video-stream-pause-audio, .video-stream-pause-video, .video-stream-fullscreen-video {
+        .video-stream-pause-audio, .video-stream-pause-video, .video-stream-fullscreen-video, .video-stream-volume-bar {
             visibility: visible;
         }
     }

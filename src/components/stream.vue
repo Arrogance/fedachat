@@ -19,6 +19,7 @@
         <span class="video-stream-audiowave" ref="audioWave">
             <b-icon-soundwave></b-icon-soundwave>
         </span>
+        <b-progress ref="streamVolume" v-on:click="changeStreamVolume" class="video-stream-volume-bar" :value="streamVolume"></b-progress>
     </div>
 </template>
 
@@ -37,6 +38,7 @@
                 audioMuted: false,
                 stream: this.streamSource,
                 streamId: this.streamSource.getId(),
+                streamVolume: 0,
                 ownStream: false,
                 streamUser: ''
             }
@@ -79,15 +81,40 @@
                 } else if (element.msRequestFullscreen) { /* IE/Edge */
                     element.msRequestFullscreen();
                 }
+            },
+            changeStreamVolume: function(event) {
+                let volume = Math.floor(event.layerX / event.target.offsetWidth * 100);
+
+                this.stream.setAudioVolume(volume);
+                this.streamVolume = volume;
+            },
+            updateStreamVolume: function(event) {
+                this.streamVolume = event.target.volume ? (event.target.volume * 100) : 0;
             }
         },
         mounted() {
+            let _this = this;
             this.elementId = 'video-'+this.streamId;
-            this.stream.play(this.elementId);
+
+            this.stream.play(this.elementId, {
+                fit: 'contain'
+            }, function() {
+                if (!_this.$refs[_this.elementId]) {
+                    return;
+                }
+
+                for (let video of _this.$refs[_this.elementId].getElementsByTagName('video')) {
+                    _this.streamVolume = video.volume ? (video.volume * 100) : false;
+                    video.onvolumechange = (event) => {
+                        _this.updateStreamVolume(event);
+                    };
+
+                    _this.$refs['streamVolume'].$el.addEventListener('click', _this.changeStreamVolume);
+                }
+            });
 
             this.streamUser = this.$root.user.streamId === this.streamId ? this.$root.user : null;
 
-            let _this = this;
             let updateStreamName = (user) => {
                 if (user.streamId === _this.streamId) {
                     _this.streamUser = user.userName;
