@@ -164,11 +164,11 @@
                 this.chatHeight = $(window).height() - fixedHeight;
             },
             mentionUserName: function(userName) {
-                let message = '@'+userName+': ';
+                let message = '@'+userName;
                 if (this.message.length === 0) {
-                    this.message = message;
+                    this.message = message + ':';
                 } else {
-                    this.message += ' '.message;
+                    this.message += ' '+ message;
                 }
 
                 this.$refs['chat-input'].focus();
