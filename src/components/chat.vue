@@ -166,7 +166,7 @@
             mentionUserName: function(userName) {
                 let message = '@'+userName;
                 if (this.message.length === 0) {
-                    this.message = message + ':';
+                    this.message = message + ': ';
                 } else {
                     this.message += ' '+ message;
                 }
