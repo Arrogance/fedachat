@@ -129,14 +129,19 @@
                 let _this = this;
                 let isMention = false;
                 let alreadyNotified = [];
+                let alreadyHighlighted = [];
+
                 mentions.forEach(function(userName) {
                     let realUserName = userName.substring(1);
                     _this.$root.users.forEach(function(user) {
                         if(user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
-                            // let regexp = new RegExp("/((?<![<strong>])@[" + realUserName + "]+)/gm", "gm");
-                            // let regexp = new RegExp("((?!([<strong>])).|^)(?:@"+ realUserName + ")", "gm");
-                            let regexp = new RegExp("((?!\S*strong)(@"+ realUserName + "))", "gm");
-                            message.content = message.content.replace(regexp, '<strong>' + userName + '</strong>');
+                            let regexp = new RegExp("((?!\S*strong)("+ userName + "))", "gm");
+                            message.content.match(regexp).forEach((value) => {
+                                if (-1 === alreadyHighlighted.indexOf(realUserName)) {
+                                    alreadyHighlighted.push(realUserName);
+                                    message.content = message.content.replace(regexp, '<strong>' + value + '</strong>');
+                                }
+                            });
 
                             if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase() && -1 === alreadyNotified.indexOf(realUserName)) {
                                 alreadyNotified.push(realUserName);
