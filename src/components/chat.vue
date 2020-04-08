@@ -133,7 +133,8 @@
                     let realUserName = userName.substring(1);
                     _this.$root.users.forEach(function(user) {
                         if(user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
-                            let regexp = new RegExp("/((?!([<strong>])).|^)(@[" + realUserName + "]+)/gm", "gm");
+                            // let regexp = new RegExp("/((?<![<strong>])@[" + realUserName + "]+)/gm", "gm");
+                            let regexp = new RegExp("((?!([<strong>])).|^)(?:@"+ realUserName + ")", "gm");
                             message.content = message.content.replace(regexp, '<strong>' + userName + '</strong>');
 
                             if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase() && -1 === alreadyNotified.indexOf(realUserName)) {
