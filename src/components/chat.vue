@@ -193,7 +193,7 @@
                     this.messages.shift();
                 }
 
-                if (this.$root.chatSoundEnabled && false === isMention) {
+                if (this.$root.chatSoundEnabled && false === isMention && this.$root.user !== message.user) {
                     SoundsComponent.playBeepSound();
                 }
 
