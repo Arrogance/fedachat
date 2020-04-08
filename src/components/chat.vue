@@ -128,13 +128,15 @@
 
                 let _this = this;
                 let isMention = false;
+                let mentions = [];
                 mentions.forEach(function(userName) {
                     let realUserName = userName.substring(1);
                     _this.$root.users.forEach(function(user) {
                         if(user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
                             message.content = message.content.replace(userName, '<strong>' + userName + '</strong>');
 
-                            if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
+                            if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase() && undefined === mentions[userName]) {
+                                mentions.push(userName);
                                 SoundsComponent.playNotificationSound();
                                 _this.$root.$refs.notifications.sendNotification(
                                     'success',
