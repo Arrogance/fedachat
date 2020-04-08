@@ -128,15 +128,16 @@
 
                 let _this = this;
                 let isMention = false;
-                let mentions = [];
+                let alreadyNotified = [];
                 mentions.forEach(function(userName) {
                     let realUserName = userName.substring(1);
                     _this.$root.users.forEach(function(user) {
                         if(user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
-                            message.content = message.content.replace(userName, '<strong>' + userName + '</strong>');
+                            let regexp = new RegExp("((?<![<strong>])@[" + realUserName + "]+)", "gm");
+                            message.content = message.content.replace(regexp, '<strong>' + userName + '</strong>');
 
-                            if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase() && undefined === mentions[userName]) {
-                                mentions.push(userName);
+                            if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase() && -1 === alreadyNotified.indexOf(realUserName)) {
+                                alreadyNotified.push(realUserName);
                                 SoundsComponent.playNotificationSound();
                                 _this.$root.$refs.notifications.sendNotification(
                                     'success',
