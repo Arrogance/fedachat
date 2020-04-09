@@ -9,7 +9,6 @@
                     </b-badge>
                 </b-col>
             </b-row>
-
             <b-row class="mt-2">
                 <b-col cols="12" class="chat-messages pr-0 pl-4" :style="'height: '+ chatHeight +'px'">
                     <div v-for="(message) in messages" v-bind:key="message.id" :id="'message-'+message.id">
@@ -59,12 +58,16 @@
                     </div>
                 </b-col>
             </b-row>
-
             <div v-if="this.$root.user" class="chat-form">
+                    <div v-if="this.showListUsers">
+                        <div class="filter">
+                            <dropdown id="component-dropdown" :options="this.$root.users" :search="this.getName(message)" :messageInput="this.$refs['chat-input']"></dropdown>
+                        </div>
+                    </div>
                 <b-form v-on:submit.prevent="sendMessage">
                     <div class="chat-input">
                         <div class="message_input_wrapper">
-                            <b-form-input ref="chat-input" class="message_input" v-model="message" placeholder="Type your message here..." />
+                            <b-form-input ref="chat-input" class="message_input" v-model="message" v-on:keyup="listUsers" placeholder="Type your message here..." />
                         </div>
                     </div>
                 </b-form>
@@ -74,17 +77,22 @@
 </template>
 
 <script>
-    import SoundsComponent from '../plugins/sound.js'
-
+    import SoundsComponent from '../plugins/sound.js';
+    import Dropdown from './autocomplete_dropdown.vue';
     const maxMessagesOnChatBuffer = 250;
 
     export default {
+        components: {
+            'dropdown': Dropdown
+        },
+
         data() {
             return {
                 users: [],
                 message: '',
                 messages: [],
-                chatHeight: 0
+                chatHeight: 0,
+                showListUsers: false,
             }
         },
         methods: {
@@ -172,7 +180,27 @@
                 }
 
                 this.$refs['chat-input'].focus();
-            }
+            },
+            getName: function (str) {
+                var pattern = /\B@[a-z0-9_-]+/gi;
+
+                this.search = str.match(pattern);
+                console.log(this.search[this.search.length-1]);
+                return this.search[this.search.length-1];
+            },
+            listUsers: function(e) {
+                if (e.keyCode === 50) {
+                    this.showListUsers = true;
+                }
+                if (this.message === '') {
+                    this.showListUsers = false;
+                }
+
+                if (e.keyCode === 32) {
+                    this.showListUsers = false;
+                }
+
+            },
         },
         mounted: function() {
             this.users = this.$root.users;
