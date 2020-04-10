@@ -66,10 +66,10 @@
                 width: 100%;
 
                 @media (max-width: 768px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
-                    &:focus {
-                        position: fixed;
-                        left: 0;
-                    }
+                    //&:focus {
+                    //    position: fixed;
+                    //    left: 0;
+                    //}
                 }
             }
         }
