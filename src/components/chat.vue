@@ -64,7 +64,7 @@
                 <b-form v-on:submit.prevent="sendMessage">
                     <div class="chat-input">
                         <div class="message_input_wrapper">
-                            <b-form-input ref="chat-input" class="message_input" v-model="message" placeholder="Type your message here..." />
+                            <b-form-input ref="chat-input" class="message_input" autocomplete="off" autofocus v-model="message" placeholder="Type your message here..." />
                         </div>
                     </div>
                 </b-form>
