@@ -32,12 +32,6 @@
             }
         }
 
-        @media not (max-width: 640px) and (orientation: landscape), not (max-width: 823px) and (orientation: landscape) {
-            .header-chat-button {
-                display: none;
-            }
-        }
-
         @media (max-width: 425px) {
             & {
                 text-align: center;
