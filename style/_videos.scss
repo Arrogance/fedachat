@@ -2,21 +2,4 @@
     text-align: center;
     width: 100%;
     margin: 0 auto;
-    .video-item {
-        display: inline-block;
-        video {
-            position: relative !important;
-            transform: inherit !important;
-            object-fit: scale-down !important;
-        }
-        .video-item-username {
-            position: absolute;
-            top: 5px;
-            left: 20px;
-            padding: 4px 6px;
-            z-index: 1;
-            background: rgba($black, 0.5);
-            color: $white;
-        }
-    }
 }

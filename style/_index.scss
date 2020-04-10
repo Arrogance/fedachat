@@ -8,6 +8,13 @@
                 display: block;
             }
         }
+
+        @media (max-width: 768px) and (orientation: landscape) {
+            & {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
     }
 
     .right-column {
@@ -31,6 +38,13 @@
             padding: 0;
             &.show {
                 display: block;
+            }
+        }
+
+        @media (max-width: 768px) and (orientation: landscape) {
+            & {
+                flex: 0 0 50%;
+                max-width: 50%;
             }
         }
     }
