@@ -98,7 +98,7 @@
                 let alreadyExists = false;
                 let _this = this;
                 this.$root.users.forEach(function(user) {
-                    if (user.userName === _this.userName && user.userName !== _this.userName) {
+                    if (user.userName === _this.userName && user.userName !== _this.$root.user.userName) {
                         alreadyExists = true;
                     }
                 });

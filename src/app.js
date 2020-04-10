@@ -46,7 +46,8 @@ const App = new Vue({
         audioEnabled: false,
         chatSoundEnabled: Storage.get('chatSoundEnabled', true),
         connected: false,
-        forceNewUserNameOnJoin: APP_REQUIRE_USER
+        forceNewUserNameOnJoin: APP_REQUIRE_USER,
+        userNameChangedTwice: APP_REQUIRE_USER !== true
     },
     methods: {
         refreshUserConnected: function(users) {
