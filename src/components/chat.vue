@@ -170,8 +170,8 @@
                 });
             },
             updateChatHeight: function() {
-                let fixedHeight = $('.chat-form').outerHeight() + $('#navbar').height() + $('.users-list').outerHeight();
-                this.chatHeight = $(window).height() - fixedHeight;
+                let fixedHeight = $('.chat-form').innerHeight() + $('#navbar').innerHeight() + $('.users-list').innerHeight();
+                this.chatHeight = $(window).innerHeight() - fixedHeight + 35;
             },
             mentionUserName: function(userName) {
                 let message = '@'+userName;
@@ -182,6 +182,11 @@
                 }
 
                 this.$refs['chat-input'].focus();
+            }
+        },
+        watch: {
+            users: function() {
+                this.updateChatHeight()
             }
         },
         mounted: function() {
