@@ -41,7 +41,7 @@
             }
         }
 
-        @media (min-width: 768px) and (orientation: landscape), (min-width: 823px) and (orientation: landscape) {
+        @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
             & {
                 flex: 0 0 50%;
                 max-width: 50%;

@@ -23,7 +23,7 @@
     }
 
     .navbar-nav {
-        @media (max-width: 768px), (max-width: 768px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
+        @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
             & {
                 flex-direction: row;
                 .nav-item {
