@@ -60,7 +60,7 @@
             optionsInit: (options) => {
                 return {
                     videoProfile: options.videoProfile.split(',')[0] || '480p_4',
-                    videoProfileLow: options.videoProfileLow.split(',')[0] || '480p_4',
+                    videoProfileLow: options.videoProfileLow.split(',')[0] || '360p_4',
                     channel: options.channel || "test",
                     transcode: options.transcode || "rtc",
                     attendeeMode: options.attendeeMode || "video",
@@ -73,6 +73,8 @@
                 return new Promise((resolve, reject) => {
                     client.init(options.key, () => {
                         let lowStreamParam = AGORA_RESOLUTION_ARR[options.videoProfileLow];
+                        let tempProfile = AGORA_RESOLUTION_ARR[options.videoProfile];
+                        options.resolution = tempProfile[0] / tempProfile[1] || 4 / 3;
 
                         client.join(
                             options.token,
@@ -149,7 +151,7 @@
                     }
 
                     client.subscribe(stream, function(err) {
-                        log("Subscribe stream failed", err);
+                        log('Stream Events', 'red', err);
                     });
                 });
 
@@ -208,7 +210,7 @@
                         },
                         err => {
                             this.$root.$emit('stop_broadcasting');
-                            console.log("getUserMedia failed", err);
+                            log('Stream', 'red', 'Failed getUserMedia. Reason: '+ err);
                             reject(err);
                         }
                     );
@@ -236,6 +238,7 @@
             let clientInitCall = function(_this) {
                 _this.clientInit(_this.client, _this.clientOptions, _this).then(uid => {
                     _this.clientUid = uid;
+                    log('Client', 'blue', 'Client initiated');
                 });
             };
 

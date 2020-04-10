@@ -40,7 +40,7 @@
 
         <div>
             <b-modal ref="username-modal" centered title="Elige un nombre de usuario" no-close-on-esc no-close-on-backdrop hide-header-close :visible="this.$root.forceNewUserNameOnJoin">
-                <b-form id="username-form" v-on:submit.prevent="">
+                <b-form id="username-form" v-on:submit.prevent="" v-on:submit="onUsernameSubmit">
                     <b-form-group id="username-group">
                         <b-form >
                             <b-form-input id="username" :state="userNameValidation.message === null" v-model="userName" v-on:keydown.enter.prevent='onUsernameSubmit' type="text" required max="22"></b-form-input>
@@ -135,7 +135,7 @@
             toggleModal(ref) {
                 this.$refs[ref].toggle('#toggle-btn')
             },
-            toggleChat(event) {
+            toggleChat() {
                 this.$root.$emit('toggle_chat');
                 this.chatShown = !this.chatShown;
             },
