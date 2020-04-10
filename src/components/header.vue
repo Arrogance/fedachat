@@ -28,7 +28,7 @@
                             <b-icon-moon></b-icon-moon>
                         </b-button>
                     </b-nav-item>
-                    <b-nav-item class="hidden show-425" v-on:click="toggleChat">
+                    <b-nav-item class="header-chat-button hidden show-425" v-on:click="toggleChat">
                         <b-button :variant="chatShown ? 'info' : 'secondary'">
                             <b-icon-chat-square-dots v-if="!chatShown"></b-icon-chat-square-dots>
                             <b-icon-chat-square-dots-fill v-else></b-icon-chat-square-dots-fill>
