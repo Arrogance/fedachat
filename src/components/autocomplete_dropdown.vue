@@ -1,7 +1,7 @@
 <template>
     <div class="dropdown">
         <ul class="suggestion-list">
-            <li v-for="(item, index) in matches" class="cursor pointer" v-on:click="mentionUserName(item[1].userName)">
+            <li v-for="(item, index) in matches" class="cursor pointer" @click="mentionUserName(item[1].userName)">
                 <strong><b-icon-person-plus></b-icon-person-plus> {{ item[1].userName }}</strong>
             </li>
         </ul>
@@ -23,23 +23,23 @@
             messageInput: {
                 type: Object,
                 required: false,
-            },
+            }
         },
         data () {
             return {
                 selectedOption: null,
-                searchText: this.search
+                inputData: String
             }
         },
 
         methods: {
             mentionUserName: function(userName) {
                 let ret = this.messageInput.$el.value.replace(/@\w{1,}$/, '');
-                console.log(userName);
                 this.messageInput.$el.value = ret+"@"+userName;
+                this.inputData = this.messageInput.$el.value
+                this.$emit('update:inputData', this.inputData);
                 this.messageInput.focus();
-            },
-
+            }
         },
         computed: {
             matches () {

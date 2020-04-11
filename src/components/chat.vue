@@ -61,13 +61,13 @@
             <div v-if="this.$root.user" class="chat-form">
                     <div v-if="this.showListUsers">
                         <div class="filter">
-                            <dropdown id="component-dropdown" :options="this.$root.users" :search="this.getName(message)" :messageInput="this.$refs['chat-input']"></dropdown>
+                            <dropdown id="component-dropdown" :inputData.sync="message" :options="this.$root.users" :search.sync="this.getName(message)" :messageInput="this.$refs['chat-input']"></dropdown>
                         </div>
                     </div>
                 <b-form v-on:submit.prevent="sendMessage">
                     <div class="chat-input">
                         <div class="message_input_wrapper">
-                            <b-form-input ref="chat-input" class="message_input" v-model="message" v-on:keyup="listUsers" placeholder="Type your message here..." />
+                            <b-form-input ref="chat-input" class="message_input" v-model="message" v-on:keyup="listUsers" :inputData.sync="message" placeholder="Type your message here..." />
                         </div>
                     </div>
                 </b-form>
@@ -183,9 +183,7 @@
             },
             getName: function (str) {
                 var pattern = /\B@[a-z0-9_-]+/gi;
-
                 this.search = str.match(pattern);
-                console.log(this.search[this.search.length-1]);
                 return this.search[this.search.length-1];
             },
             listUsers: function(e) {
@@ -199,7 +197,6 @@
                 if (e.keyCode === 32) {
                     this.showListUsers = false;
                 }
-
             },
         },
         mounted: function() {
