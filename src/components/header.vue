@@ -39,7 +39,7 @@
         </b-navbar>
 
         <div>
-            <b-modal ref="username-modal" centered title="Elige un nombre de usuario" no-close-on-esc no-close-on-backdrop hide-header-close :visible="this.$root.forceNewUserNameOnJoin">
+            <b-modal ref="username-modal" centered title="Elige un nombre de usuario" no-close-on-esc no-close-on-backdrop hide-header-close :visible="this.$root.forceNewUserNameOnJoin && this.$root.connected">
                 <b-form id="username-form" v-on:submit.prevent="" v-on:submit="onUsernameSubmit">
                     <b-form-group id="username-group">
                         <b-form >
