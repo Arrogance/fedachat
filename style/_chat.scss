@@ -17,6 +17,13 @@
         }
     }
 
+<<<<<<< HEAD
+    @media (min-width: 992px) {  }
+
+    @media (min-width: 1200px) { }
+
+=======
+>>>>>>> master
     .users-list {
         border-bottom: 1px dashed darken($light, 8);
         padding: 8px 10px 12px;
@@ -64,7 +71,6 @@
             width: 100%;
             input {
                 width: 100%;
-
                 @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
                     //&:focus {
                     //    position: fixed;
@@ -84,6 +90,61 @@
             position: fixed;
             height: auto;
             padding: 10px;
+        }
+    }
+
+    .filter {
+        background-color: $light;
+        position: absolute;
+        margin-top: -73px;
+        height: 73px;
+        padding-right: 2px;
+        overflow: hidden;
+        overflow-y: scroll;
+
+        &::-webkit-scrollbar {
+            width: 1em;
+        }
+
+        &::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: darkgrey;
+            outline: 1px solid slategrey;
+        }
+
+        .dropdown {
+            display: flex;
+
+            &::-webkit-scrollbar {
+                width: 1em;
+            }
+
+            &::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: darkgrey;
+                outline: 1px solid slategrey;
+            }
+
+        }
+
+        .suggestion-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: max-content;
+            min-height: 26px; /*required for scrolling */
+            max-height: 145px;
+            overflow: auto; /*required for scrolling */
+
+            ul li:hover {
+                background: gainsboro;
+            }
         }
     }
 }
