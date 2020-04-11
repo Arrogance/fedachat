@@ -9,7 +9,13 @@
             }
         }
 
-        @media (max-width: 768px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
+        @media
+        (max-width: 823px) and (max-height: 411px) and (orientation: landscape),
+        (max-width: 731px) and (max-height: 411px) and (orientation: landscape),
+        (max-width: 568px) and (max-height: 320px) and (orientation: landscape),
+        (max-width: 667px) and (max-height: 375px) and (orientation: landscape),
+        (max-width: 812px) and (max-height: 375px) and (orientation: landscape)
+        {
             & {
                 flex: 0 0 50%;
                 max-width: 50%;
@@ -41,7 +47,13 @@
             }
         }
 
-        @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
+        @media
+        (max-width: 823px) and (max-height: 411px) and (orientation: landscape),
+        (max-width: 731px) and (max-height: 411px) and (orientation: landscape),
+        (max-width: 568px) and (max-height: 320px) and (orientation: landscape),
+        (max-width: 667px) and (max-height: 375px) and (orientation: landscape),
+        (max-width: 812px) and (max-height: 375px) and (orientation: landscape)
+        {
             & {
                 flex: 0 0 50%;
                 max-width: 50%;
