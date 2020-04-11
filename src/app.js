@@ -21,9 +21,8 @@ Vue.use(VueRouter);
 import HeaderComponent from './components/header.vue';
 import NotificationsComponent from './components/notifications.vue';
 import Storage from './plugins/storage/storage';
-import randomWords from 'random-words';
 
-import { SOCKET_ENDPOINT, APP_REQUIRE_USER, APP_REQUIRE_TERMS } from '../config';
+import { APP_REQUIRE_USER, APP_REQUIRE_TERMS } from '../config';
 
 const App = new Vue({
     el: '#app',
@@ -56,6 +55,6 @@ const reloadFunction = function() {
     location.reload();
 };
 
-// Vue.config.errorHandler = reloadFunction;
+Vue.config.errorHandler = reloadFunction;
 
 export default App;
