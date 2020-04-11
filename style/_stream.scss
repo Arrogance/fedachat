@@ -12,9 +12,15 @@
         top: 5px;
         left: 20px;
         padding: 4px 6px;
-        z-index: 1;
+        z-index: 99;
         background: rgba($black, 0.5);
         color: $white;
+        @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
+            text-overflow: ellipsis;
+            max-width: 70%;
+            white-space: nowrap;
+            overflow: hidden;
+        }
     }
 
     .video-stream-audio-only {
@@ -24,6 +30,9 @@
         z-index: 9;
         transform: translate(-50%, -50%);
         font-size: 5em;
+        @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
+            font-size: 2.5em;
+        }
     }
 
     .video-stream-pause-video {
@@ -131,5 +140,14 @@
 
     @media (max-width: 1024px) {
         height: 200px;
+    }
+
+    @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
+        & {
+            flex: 0 0 50%;
+            max-width: 50%;
+            height: 100px;
+            padding: 0 10px;
+        }
     }
 }

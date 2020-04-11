@@ -28,44 +28,44 @@ body {
         background-color: darkgrey;
         outline: 1px solid slategrey;
     }
-}
 
-.hidden {
-    display: none;
-}
-
-.cursor {
-    &.pointer {
-        cursor: pointer;
-    }
-}
-
-@media (max-width: 425px) {
-    .hide-425 {
+    .hidden {
         display: none;
     }
-    .show-425 {
-        display: inline-block;
-    }
-    .hide-375 {
-        display: none;
-    }
-    .show-375 {
-        display: inline-block;
-    }
-    .capitalize-425 {
-        text-transform: capitalize;
-    }
-}
 
-@media (max-width: 375px) {
-    .hide-375 {
-        display: none;
+    .cursor {
+        &.pointer {
+            cursor: pointer;
+        }
     }
-    .show-375 {
-        display: inline-block;
+
+    @media (max-width: 425px), (max-width: 768px) and (orientation: landscape) {
+        .hide-425 {
+            display: none;
+        }
+        .show-425 {
+            display: inline-block;
+        }
+        .hide-375 {
+            display: none;
+        }
+        .show-375 {
+            display: inline-block;
+        }
+        .capitalize-425 {
+            text-transform: capitalize;
+        }
     }
-    .capitalize-425 {
-        text-transform: capitalize;
+
+    @media (max-width: 375px) and (orientation: portrait) {
+        .hide-375 {
+            display: none;
+        }
+        .show-375 {
+            display: inline-block;
+        }
+        .capitalize-425 {
+            text-transform: capitalize;
+        }
     }
 }

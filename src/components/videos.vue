@@ -44,6 +44,7 @@
         data() {
             return {
                 client: null,
+                clientInitiated: false,
                 clientUid: null,
                 clientOptions: {
                     key: AGORA_APP_ID
@@ -68,10 +69,12 @@
                     resolution: undefined,
                 }
             },
-            clientInit: (client, options) => {
+            clientInit: (client, options, _this) => {
                 return new Promise((resolve, reject) => {
                     client.init(options.key, () => {
                         let lowStreamParam = AGORA_RESOLUTION_ARR[options.videoProfileLow];
+                        let tempProfile = AGORA_RESOLUTION_ARR[options.videoProfile];
+                        options.resolution = tempProfile[0] / tempProfile[1] || 4 / 3;
 
                         client.join(
                             options.token,
@@ -84,6 +87,7 @@
                                     framerate: lowStreamParam[2],
                                     bitrate: lowStreamParam[3]
                                 });
+                                _this.clientInitiated = true;
                                 resolve(uid);
                             },
                             err => {
@@ -147,7 +151,7 @@
                     }
 
                     client.subscribe(stream, function(err) {
-                        log("Subscribe stream failed", err);
+                        log('Stream Events', 'red', err);
                     });
                 });
 
@@ -206,7 +210,7 @@
                         },
                         err => {
                             this.$root.$emit('stop_broadcasting');
-                            console.log("getUserMedia failed", err);
+                            log('Stream', 'red', 'Failed getUserMedia. Reason: '+ err);
                             reject(err);
                         }
                     );
@@ -229,14 +233,30 @@
                 mode: this.clientOptions.transcode
             });
 
-            this.subscribeStreamEvents(this.client, this);
+            this.subscribeStreamEvents(this.client, _this);
+
+            let clientInitCall = function(_this) {
+                _this.clientInit(_this.client, _this.clientOptions, _this).then(uid => {
+                    _this.clientUid = uid;
+                    log('Client', 'blue', 'Client initiated');
+                });
+            };
+
+            this.$root.$on('username_changed', function() {
+                if (_this.$root.forceNewUserNameOnJoin === true && _this.$root.userNameChangedTwice === false) {
+                    _this.$root.userNameChangedTwice = true;
+                    if (_this.clientInitiated === false) {
+                        clientInitCall(_this);
+                    }
+                }
+            });
 
             this.$root.$on('user_stream_token', function(streamToken) {
                 _this.clientOptions.token = streamToken;
                 _this.clientOptions.uid = _this.$root.user.uuid;
-                _this.clientInit(_this.client, _this.clientOptions).then(uid => {
-                    _this.clientUid = uid;
-                });
+                if (_this.clientInitiated === false && _this.$root.userNameChangedTwice === true) {
+                    clientInitCall(_this);
+                }
             });
 
             this.$root.socket.on('stop_streaming', function(user) {

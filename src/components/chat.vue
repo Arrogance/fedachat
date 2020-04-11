@@ -67,7 +67,7 @@
                 <b-form v-on:submit.prevent="sendMessage">
                     <div class="chat-input">
                         <div class="message_input_wrapper">
-                            <b-form-input ref="chat-input" class="message_input" v-model="message" v-on:keyup="listUsers" :inputData.sync="message" placeholder="Type your message here..." />
+                            <b-form-input ref="chat-input" class="message_input" autocomplete="off" autofocus v-model="message" v-on:keyup="listUsers" :inputData.sync="message" placeholder="Type your message here..." />
                         </div>
                     </div>
                 </b-form>
@@ -136,13 +136,23 @@
 
                 let _this = this;
                 let isMention = false;
+                let alreadyNotified = [];
+                let alreadyHighlighted = [];
+
                 mentions.forEach(function(userName) {
                     let realUserName = userName.substring(1);
                     _this.$root.users.forEach(function(user) {
                         if(user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
-                            message.content = message.content.replace(userName, '<strong>' + userName + '</strong>');
+                            let regexp = new RegExp("((?!\S*strong)("+ userName + "))", "gm");
+                            message.content.match(regexp).forEach((value) => {
+                                if (-1 === alreadyHighlighted.indexOf(realUserName)) {
+                                    alreadyHighlighted.push(realUserName);
+                                    message.content = message.content.replace(regexp, '<strong>' + value + '</strong>');
+                                }
+                            });
 
-                            if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase()) {
+                            if(_this.$root.user.userName.toLowerCase() === realUserName.trim().toLowerCase() && -1 === alreadyNotified.indexOf(realUserName)) {
+                                alreadyNotified.push(realUserName);
                                 SoundsComponent.playNotificationSound();
                                 _this.$root.$refs.notifications.sendNotification(
                                     'success',
@@ -168,8 +178,8 @@
                 });
             },
             updateChatHeight: function() {
-                let fixedHeight = $('.chat-form').outerHeight() + $('#navbar').height() + $('.users-list').outerHeight();
-                this.chatHeight = $(window).height() - fixedHeight;
+                let fixedHeight = $('.chat-form').innerHeight() + $('#navbar').innerHeight() + $('.users-list').innerHeight();
+                this.chatHeight = $(window).innerHeight() - fixedHeight + 35;
             },
             mentionUserName: function(userName) {
                 let message = '@'+userName;
@@ -199,6 +209,11 @@
                 }
             },
         },
+        watch: {
+            users: function() {
+                this.updateChatHeight()
+            }
+        },
         mounted: function() {
             this.users = this.$root.users;
 
@@ -218,7 +233,7 @@
                     this.messages.shift();
                 }
 
-                if (this.$root.chatSoundEnabled && false === isMention) {
+                if (this.$root.chatSoundEnabled && false === isMention && this.$root.user.uuid !== message.user.uuid) {
                     SoundsComponent.playBeepSound();
                 }
 

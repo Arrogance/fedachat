@@ -1,5 +1,5 @@
 const log = (prefix, color, info) => {
-    console.log(`%c ${prefix}: ${info}`, `color: ${color}`);
+    console.log(`%c${prefix}: ${info}`, `color: ${color}`);
 };
 
 const logger = {

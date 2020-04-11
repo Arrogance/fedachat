@@ -28,7 +28,7 @@
                             <b-icon-moon></b-icon-moon>
                         </b-button>
                     </b-nav-item>
-                    <b-nav-item class="hidden show-425" v-on:click="toggleChat">
+                    <b-nav-item class="header-chat-button hidden show-425" v-on:click="toggleChat">
                         <b-button :variant="chatShown ? 'info' : 'secondary'">
                             <b-icon-chat-square-dots v-if="!chatShown"></b-icon-chat-square-dots>
                             <b-icon-chat-square-dots-fill v-else></b-icon-chat-square-dots-fill>
@@ -40,7 +40,7 @@
 
         <div>
             <b-modal ref="username-modal" centered title="Elige un nombre de usuario" no-close-on-esc no-close-on-backdrop hide-header-close :visible="this.$root.forceNewUserNameOnJoin">
-                <b-form id="username-form" v-on:submit.prevent="">
+                <b-form id="username-form" v-on:submit.prevent="" v-on:submit="onUsernameSubmit">
                     <b-form-group id="username-group">
                         <b-form >
                             <b-form-input id="username" :state="userNameValidation.message === null" v-model="userName" v-on:keydown.enter.prevent='onUsernameSubmit' type="text" required max="22"></b-form-input>
@@ -98,7 +98,7 @@
                 let alreadyExists = false;
                 let _this = this;
                 this.$root.users.forEach(function(user) {
-                    if (user.userName === _this.userName && user.userName !== _this.userName) {
+                    if (user.userName === _this.userName && user.userName !== _this.$root.user.userName) {
                         alreadyExists = true;
                     }
                 });
@@ -135,7 +135,7 @@
             toggleModal(ref) {
                 this.$refs[ref].toggle('#toggle-btn')
             },
-            toggleChat(event) {
+            toggleChat() {
                 this.$root.$emit('toggle_chat');
                 this.chatShown = !this.chatShown;
             },

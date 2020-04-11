@@ -17,10 +17,13 @@
         }
     }
 
+<<<<<<< HEAD
     @media (min-width: 992px) {  }
 
     @media (min-width: 1200px) { }
 
+=======
+>>>>>>> master
     .users-list {
         border-bottom: 1px dashed darken($light, 8);
         padding: 8px 10px 12px;
@@ -68,6 +71,12 @@
             width: 100%;
             input {
                 width: 100%;
+                @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
+                    //&:focus {
+                    //    position: fixed;
+                    //    left: 0;
+                    //}
+                }
             }
         }
 

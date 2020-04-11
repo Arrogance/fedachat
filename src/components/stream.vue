@@ -143,9 +143,13 @@
             }
 
             const audioWaveInterval = () => setInterval(function() {
-                let audioLevel = _this.stream.getAudioLevel();
+                if (!_this.$refs.audioWave) {
+                    return;
+                }
 
+                let audioLevel = _this.stream.getAudioLevel();
                 let transformedAudioLevel = audioLevel * 100;
+
                 if (transformedAudioLevel > 1) {
                     if (!_this.$refs.audioWave.classList.contains('enabled')) {
                         _this.$refs.audioWave.classList.add('enabled');
