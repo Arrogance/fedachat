@@ -18,3 +18,9 @@ let appRequireUser =
         : process.env.APP_REQUIRE_USER === 'true';
 
 export const APP_REQUIRE_USER = appRequireUser;
+
+let appRequireTerms =
+    process.env.APP_REQUIRE_TERMS === undefined
+        ? true
+        : process.env.APP_REQUIRE_TERMS === 'true';
+export const APP_REQUIRE_TERMS = appRequireTerms;

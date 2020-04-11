@@ -38,8 +38,11 @@
         },
         mounted() {
             let _this = this;
-            this.$root.socket.on('notification', function(event) {
-                _this.sendNotification(event.type, event.content);
+
+            this.$root.$on('socket_connected', function() {
+                _this.$root.socket.on('notification', function(event) {
+                    _this.sendNotification(event.type, event.content);
+                });
             });
         }
     }

@@ -84,12 +84,13 @@
                 users: [],
                 message: '',
                 messages: [],
-                chatHeight: 0
+                chatHeight: 0,
+                connected: false,
             }
         },
         methods: {
             sendMessage: function() {
-                if (this.message === '') {
+                if (this.message === '' || this.$root.connected === false) {
                     return;
                 }
 
@@ -190,37 +191,42 @@
             }
         },
         mounted: function() {
-            this.users = this.$root.users;
+            this.connected = this.$root.connected;
 
-            this.$root.socket.on('messages', (messages) => {
-                this.messages = messages;
+            let _this = this;
+            this.$root.$on('socket_connected', function() {
+                console.log('Chat Connected');
+                this.users = _this.$root.users;
 
-                let messageDom = $('.chat-messages');
-                messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
-                this.updateChatHeight();
-            });
+                _this.$root.socket.on('messages', (messages) => {
+                    _this.messages = messages;
 
-            this.$root.socket.on('message', (message) => {
-                let isMention = this.sendMentions(message);
-                this.messages.push(message);
+                    let messageDom = $('.chat-messages');
+                    messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
+                    _this.updateChatHeight();
+                });
 
-                if (this.messages.length > maxMessagesOnChatBuffer) {
-                    this.messages.shift();
-                }
+                _this.$root.socket.on('message', (message) => {
+                    let isMention = _this.sendMentions(message);
+                    _this.messages.push(message);
 
-                if (this.$root.chatSoundEnabled && false === isMention && this.$root.user.uuid !== message.user.uuid) {
-                    SoundsComponent.playBeepSound();
-                }
+                    if (_this.messages.length > maxMessagesOnChatBuffer) {
+                        _this.messages.shift();
+                    }
 
-                let messageDom = $('.chat-messages');
-                messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
-                this.updateChatHeight();
+                    if (_this.$root.chatSoundEnabled && false === isMention && _this.$root.user.uuid !== message.user.uuid) {
+                        SoundsComponent.playBeepSound();
+                    }
+
+                    let messageDom = $('.chat-messages');
+                    messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
+                    _this.updateChatHeight();
+                });
             });
 
             this.$root.$on('username_changed', this.userNameModified);
             this.updateChatHeight();
 
-            let _this = this;
             $(window).resize(function() {
                 _this.updateChatHeight();
             });

@@ -6,7 +6,7 @@
                     <h1>FedaChat</h1>
                 </b-navbar-brand>
 
-                <b-navbar-nav class="ml-auto">
+                <b-navbar-nav class="ml-auto" v-if="this.$root.connected">
                     <b-nav-item>
                         <app-broadcast-initializer></app-broadcast-initializer>
                     </b-nav-item>

@@ -1,7 +1,7 @@
 <template>
     <section id="app-videos">
         <b-container fluid="">
-            <b-row class="mt-4">
+            <b-row class="mt-4" v-if="this.$root.connected">
                 <app-stream v-for="stream in streamList" v-bind:stream-source="stream" v-bind:key="stream.getId()" v-bind:client="client"></app-stream>
             </b-row>
         </b-container>
@@ -206,7 +206,7 @@
                             if (null !== this.videoStream.getId()) {
                                 this.client.publish(this.videoStream);
                             }
-                            resolve();
+                            resolve(this.videoStream.getId());
                         },
                         err => {
                             this.$root.$emit('stop_broadcasting');
@@ -229,12 +229,6 @@
                 attendeeMode: this.attendeeMode,
             }));
 
-            this.client = AgoraRTC.createClient({
-                mode: this.clientOptions.transcode
-            });
-
-            this.subscribeStreamEvents(this.client, _this);
-
             let clientInitCall = function(_this) {
                 _this.clientInit(_this.client, _this.clientOptions, _this).then(uid => {
                     _this.clientUid = uid;
@@ -242,81 +236,89 @@
                 });
             };
 
-            this.$root.$on('username_changed', function() {
-                if (_this.$root.forceNewUserNameOnJoin === true && _this.$root.userNameChangedTwice === false) {
-                    _this.$root.userNameChangedTwice = true;
-                    if (_this.clientInitiated === false) {
+            this.$root.$on('socket_connected', function() {
+                _this.client = AgoraRTC.createClient({
+                    mode: _this.clientOptions.transcode
+                });
+
+                _this.subscribeStreamEvents(_this.client, _this);
+
+                let clickListener = document.addEventListener('click', function(event) {
+                    if (_this.streamList) {
+                        _this.streamList.forEach(function(stream) {
+                            stream.resume()
+                        });
+
+                        _this.$root.audioEnabled = true;
+                        event.target.removeEventListener('click', clickListener);
+                    }
+                });
+
+                _this.$root.$on('username_changed', function() {
+                    if (_this.$root.forceNewUserNameOnJoin === true && _this.$root.userNameChangedTwice === false) {
+                        _this.$root.userNameChangedTwice = true;
+                        if (_this.clientInitiated === false) {
+                            clientInitCall(_this);
+                        }
+                    }
+                });
+
+                _this.$root.$on('user_stream_token', function(streamToken) {
+                    _this.clientOptions.token = streamToken;
+                    _this.clientOptions.uid = _this.$root.user.uuid;
+                    if (_this.clientInitiated === false && _this.$root.userNameChangedTwice === true) {
                         clientInitCall(_this);
                     }
-                }
-            });
+                });
 
-            this.$root.$on('user_stream_token', function(streamToken) {
-                _this.clientOptions.token = streamToken;
-                _this.clientOptions.uid = _this.$root.user.uuid;
-                if (_this.clientInitiated === false && _this.$root.userNameChangedTwice === true) {
-                    clientInitCall(_this);
-                }
-            });
+                _this.$root.socket.on('stop_streaming', function(user) {
+                    _this.removeStream(user.streamId, _this);
 
-            this.$root.socket.on('stop_streaming', function(user) {
-               _this.removeStream(user.streamId, _this);
+                    if (_this.$root.user && _this.$root.user.streamId === user.streamId) {
+                        _this.$root.$emit('video_reset');
+                        _this.$root.$emit('audio_reset');
 
-                if (_this.$root.user && _this.$root.user.streamId === user.streamId) {
+                        _this.$root.$emit('stopped_broadcasting');
+                    }
+                });
+
+                _this.$root.$on('start_broadcasting', function() {
+                    _this.setDevice().then(function(uid) {
+                        _this.$root.$emit('user_started_broadcasting', uid);
+                    });
+                });
+
+                _this.$root.$on('stop_broadcasting', function() {
+                    _this.videoStream && _this.videoStream.close();
+                    _this.client && _this.client.unpublish(_this.videoStream);
+
+                    _this.removeStream(_this.clientUid, _this);
+
                     _this.$root.$emit('video_reset');
                     _this.$root.$emit('audio_reset');
 
                     _this.$root.$emit('stopped_broadcasting');
-                }
-            });
-
-            this.$root.$on('start_broadcasting', function() {
-                _this.setDevice().then(function() {
-                    _this.$root.$emit('user_started_broadcasting', _this.clientUid);
                 });
-            });
 
-            this.$root.$on('stop_broadcasting', function() {
-                _this.videoStream && _this.videoStream.close();
-                _this.client && _this.client.unpublish(_this.videoStream);
+                _this.$root.$on('self_muted', function() {
+                    _this.videoStream.isAudioOn()
+                        ? _this.videoStream.muteAudio()
+                        : _this.videoStream.unmuteAudio();
+                });
 
-                _this.removeStream(_this.clientUid, _this);
+                _this.$root.$on('self_paused', function() {
+                    _this.videoStream.isVideoOn()
+                        ? _this.videoStream.muteVideo()
+                        : _this.videoStream.unmuteVideo();
+                });
 
-                _this.$root.$emit('video_reset');
-                _this.$root.$emit('audio_reset');
+                _this.$root.$on('camera_selected', function(device) {
+                    _this.videoDevice = device;
+                });
 
-                _this.$root.$emit('stopped_broadcasting');
-            });
-
-            this.$root.$on('self_muted', function() {
-                _this.videoStream.isAudioOn()
-                    ? _this.videoStream.muteAudio()
-                    : _this.videoStream.unmuteAudio();
-            });
-
-            this.$root.$on('self_paused', function() {
-                _this.videoStream.isVideoOn()
-                    ? _this.videoStream.muteVideo()
-                    : _this.videoStream.unmuteVideo();
-            });
-
-            this.$root.$on('camera_selected', function(device) {
-                _this.videoDevice = device;
-            });
-
-            this.$root.$on('audio_selected', function(device) {
-                _this.audioDevice = device;
-            });
-
-            let clickListener = document.addEventListener('click', function(event) {
-                if (_this.streamList) {
-                    _this.streamList.forEach(function(stream) {
-                        stream.resume()
-                    });
-
-                    _this.$root.audioEnabled = true;
-                    event.target.removeEventListener('click', clickListener);
-                }
+                _this.$root.$on('audio_selected', function(device) {
+                    _this.audioDevice = device;
+                });
             });
         }
     }
