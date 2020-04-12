@@ -30,7 +30,8 @@ io.on('connection', socket => {
     socket.emit('users', users);
 
     socket.on('message_command', function(event) {
-        admin.command(event.command, event.content);
+        // admin.command(event.command, event.content);
+        console.log(event);
     });
 
     socket.on('message', function(event) {
