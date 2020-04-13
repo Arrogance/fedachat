@@ -71,6 +71,7 @@ body.dark {
             padding-right: 2px;
             overflow: hidden;
             overflow-y: scroll;
+            display: list-item;
 
             &::-webkit-scrollbar {
                 width: 1em;

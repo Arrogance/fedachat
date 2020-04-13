@@ -60,14 +60,12 @@
             </b-row>
             <div v-if="this.$root.user" class="chat-form">
                     <div v-if="this.showListUsers">
-                        <div class="filter">
-                            <dropdown id="component-dropdown" :inputData.sync="message" :options="this.$root.users" :search.sync="this.getName(message)" :messageInput="this.$refs['chat-input']"></dropdown>
-                        </div>
+                        <dropdown id="component-dropdown" :inputData.sync="message" :options="this.$root.users" :search.sync="this.getName(message)" :messageInput="this.$refs['chat-input']"></dropdown>
                     </div>
                 <b-form v-on:submit.prevent="sendMessage">
                     <div class="chat-input">
                         <div class="message_input_wrapper">
-                            <b-form-input ref="chat-input" class="message_input" autocomplete="off" autofocus v-model="message" v-on:keyup="listUsers" :inputData.sync="message" placeholder="Type your message here..." />
+                            <b-form-input ref="chat-input" class="message_input" autocomplete="off" autofocus v-model="message" @keypress="listUsers($event)" :inputData.sync="message" placeholder="Type your message here..." />
                         </div>
                     </div>
                 </b-form>
@@ -192,19 +190,21 @@
                 this.$refs['chat-input'].focus();
             },
             getName: function (str) {
-                var pattern = /\B@[a-z0-9_-]+/gi;
-                this.search = str.match(pattern);
-                return this.search[this.search.length-1];
+                let pattern = /\B@[a-z0-9_-]+/gi;
+                let search = str.match(pattern);
+
+                if (search !== null) {
+                    return search[search.length-1];
+                }
             },
             listUsers: function(e) {
-                if (e.keyCode === 50) {
+                if (e.charCode === 64) {
                     this.showListUsers = true;
                 }
-                if (this.message === '') {
+                if (e.charCode === 32) {
                     this.showListUsers = false;
                 }
-
-                if (e.keyCode === 32) {
+                if (e.charCode === 13) {
                     this.showListUsers = false;
                 }
             },
