@@ -12,8 +12,11 @@ export default class Admin {
     }
 
     command(command, content) {
-        // eslint-disable-next-line no-eval
-        return eval('this.' + command)(content, this);
+        if (this[command] !== undefined) {
+            return this[command](content, this);
+        }
+
+        this.notification.danger('admin_unknown_command', false);
     }
 
     admin(content, _this) {

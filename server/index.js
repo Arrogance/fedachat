@@ -21,17 +21,14 @@ let messages = [];
 
 io.on('connection', socket => {
     let admin = new Admin(socket, io, users);
-    let notification = new Notification(socket, io);
+    let user;
 
     const token = new AgoraToken();
-
-    let user;
 
     socket.emit('users', users);
 
     socket.on('message_command', function(event) {
-        // admin.command(event.command, event.content);
-        console.log(event);
+        admin.command(event.command, event.content);
     });
 
     socket.on('message', function(event) {
