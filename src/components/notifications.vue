@@ -8,6 +8,8 @@
                 return 'Se ha conectado como admin.';
             case 'admin_error':
                 return 'La contraseña proporcionada no es correcta.';
+            case 'admin_unknown_command':
+                return 'El comando indicado no existe o no es válido.';
             case 'connection_successful':
                 return 'Conectado al chat correctamente.';
             case 'disconnection':
