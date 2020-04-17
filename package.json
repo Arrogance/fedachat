@@ -32,7 +32,8 @@
         "esm": "^3.2.25",
         "express": "^4.17.1",
         "socket.io": "^2.3.0",
-        "uuid": "^7.0.2"
+        "uuid": "^7.0.2",
+        "vue-youtube-embed": "^2.2.2"
     },
     "devDependencies": {
         "agora-rtc-sdk": "^3.0.2",

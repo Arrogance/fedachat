@@ -62,6 +62,10 @@
                         <b-form-checkbox v-model="chatSoundEnabled" v-on:input="onChatSoundEnabled" :checked="true" :unchecked-value="false">Sonidos del chat activados</b-form-checkbox>
                     </b-form-group>
 
+                    <b-form-group>
+                        <b-form-checkbox v-model="chatEmbedVideoEnabled" v-on:input="onChatEmbedVideoEnabled" :checked="true" :unchecked-value="false">Mostrar el reproductor de vídeo en el chat.</b-form-checkbox>
+                    </b-form-group>
+
                     <b-button type="submit" variant="primary" v-on:click="toggleModal('options-modal')">Aceptar</b-button>
                 </b-form>
             </b-modal>
@@ -81,6 +85,7 @@
                     message: null
                 },
                 chatSoundEnabled: true,
+                chatEmbedVideoEnabled: true,
                 chatShown: false,
                 darkMode: Storage.get('darkMode', false)
             }
@@ -132,6 +137,10 @@
                 this.$root.chatSoundEnabled = this.chatSoundEnabled;
                 Storage.set('chatSoundEnabled', this.$root.chatSoundEnabled);
             },
+            onChatEmbedVideoEnabled: function() {
+                this.$root.chatEmbedVideoEnabled = this.chatEmbedVideoEnabled;
+                Storage.set('chatEmbedVideoEnabled', this.$root.chatEmbedVideoEnabled);
+            },
             toggleModal(ref) {
                 this.$refs[ref].toggle('#toggle-btn')
             },
@@ -157,6 +166,7 @@
         },
         mounted() {
             this.chatSoundEnabled = this.$root.chatSoundEnabled;
+            this.chatEmbedVideoEnabled = this.$root.chatEmbedVideoEnabled;
             if (Storage.get('darkMode')) document.getElementsByTagName("body")[0].classList.toggle('dark');
         }
     }

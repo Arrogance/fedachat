@@ -7,7 +7,12 @@ class Storage {
     }
 
     get(key, defaultValue = null) {
-        return this.provider.get(key) ? this.provider.get(key) : defaultValue;
+        let value = this.provider.get(key);
+        if (value === null || value === undefined) {
+            value = defaultValue;
+        }
+
+        return value;
     }
 
     set(key, value) {

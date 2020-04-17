@@ -3,8 +3,10 @@ import { Routes } from './routes';
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import linkify from 'vue-linkify';
+import VueYouTubeEmbed from 'vue-youtube-embed';
 
 Vue.directive('linkified', linkify);
+Vue.use(VueYouTubeEmbed);
 
 import '../style/app.scss';
 
@@ -42,6 +44,7 @@ const App = new Vue({
         mediaEnabled: false,
         audioEnabled: false,
         chatSoundEnabled: Storage.get('chatSoundEnabled', true),
+        chatEmbedVideoEnabled: Storage.get('chatEmbedVideoEnabled', true),
         connected: false,
         forceNewUserNameOnJoin: APP_REQUIRE_USER,
         userNameChangedTwice: APP_REQUIRE_USER !== true,

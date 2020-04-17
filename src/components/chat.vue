@@ -35,6 +35,11 @@
                             <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}:</strong>
                             <span v-html="message.content" v-linkified></span>
                         </div>
+                        <div v-else-if="message.type === 'youtube'" :class="message.type">
+                            <b-icon-collection-play></b-icon-collection-play>
+                            <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> ha enviado un vídeo:
+                            <youtube :video-id="message.videoId"></youtube>
+                        </div>
                         <div v-else-if="message.type === 'start_broadcasting'" :class="message.type">
                             <span>
                                 <b-icon-camera-video-fill></b-icon-camera-video-fill>
@@ -75,6 +80,7 @@
 
 <script>
     import SoundsComponent from '../plugins/sound.js'
+    import { getIdFromURL } from 'vue-youtube-embed'
 
     const maxMessagesOnChatBuffer = 250;
 
@@ -183,6 +189,44 @@
                 }
 
                 this.$refs['chat-input'].focus();
+            },
+            onMessage: function(message) {
+                let isMention = this.sendMentions(message);
+
+                if (this.$root.chatSoundEnabled && false === isMention && this.$root.user.uuid !== message.user.uuid) {
+                    SoundsComponent.playBeepSound();
+                }
+
+                let isYoutube = this.onYoutubeMessage(message);
+                if (isYoutube && this.$root.chatEmbedVideoEnabled === true) {
+                    message.type = 'youtube';
+                    message.videoId = getIdFromURL(isYoutube[0])
+                }
+
+                this.messages.push(message);
+
+                if (this.messages.length > maxMessagesOnChatBuffer) {
+                    this.messages.shift();
+                }
+
+                let messageDom = $('.chat-messages');
+                messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
+                this.updateChatHeight();
+            },
+            onMessages: function(messages) {
+                this.messages = messages;
+
+                let messageDom = $('.chat-messages');
+                messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
+                this.updateChatHeight();
+            },
+            onYoutubeMessage: function(message) {
+                if (message.type !== 'chat') {
+                    return;
+                }
+
+                let regexp = new RegExp('^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube\\.com|youtu.be))(\\/(?:[\\w\\-]+\\?v=|embed\\/|v\\/)?)([\\w\\-]+)(\\S+)?$', 'gm');
+                return message.content.match(regexp);
             }
         },
         watch: {
@@ -195,33 +239,10 @@
 
             let _this = this;
             this.$root.$on('socket_connected', function() {
-                console.log('Chat Connected');
-                this.users = _this.$root.users;
+                _this.users = _this.$root.users;
 
-                _this.$root.socket.on('messages', (messages) => {
-                    _this.messages = messages;
-
-                    let messageDom = $('.chat-messages');
-                    messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
-                    _this.updateChatHeight();
-                });
-
-                _this.$root.socket.on('message', (message) => {
-                    let isMention = _this.sendMentions(message);
-                    _this.messages.push(message);
-
-                    if (_this.messages.length > maxMessagesOnChatBuffer) {
-                        _this.messages.shift();
-                    }
-
-                    if (_this.$root.chatSoundEnabled && false === isMention && _this.$root.user.uuid !== message.user.uuid) {
-                        SoundsComponent.playBeepSound();
-                    }
-
-                    let messageDom = $('.chat-messages');
-                    messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
-                    _this.updateChatHeight();
-                });
+                _this.$root.socket.on('messages', _this.onMessages);
+                _this.$root.socket.on('message', _this.onMessage);
             });
 
             this.$root.$on('username_changed', this.userNameModified);

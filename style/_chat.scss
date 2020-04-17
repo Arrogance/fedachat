@@ -50,6 +50,24 @@
             bottom: 0;
             padding: 0 !important;
         }
+
+        .youtube {
+            iframe {
+                margin: 5px 0;
+                max-width: 80%;
+                max-height: 265px;
+
+                @media (max-width: 425px) {
+                    max-width: 100%;
+                    max-height: 200px;
+                }
+
+                @media (max-width: 768px) and (orientation: landscape), (max-width: 731px) and (orientation: landscape), (max-width: 823px) and (orientation: landscape) {
+                    max-width: 100%;
+                    max-height: 200px;
+                }
+            }
+        }
     }
 
     .chat-form {
