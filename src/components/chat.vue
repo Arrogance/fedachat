@@ -38,7 +38,7 @@
                         <div v-else-if="message.type === 'youtube'" :class="message.type">
                             <b-icon-collection-play></b-icon-collection-play>
                             <strong v-on:click="mentionUserName(message.user.userName)" class="cursor pointer">{{ message.user.userName }}</strong> ha enviado un vídeo:
-                            <youtube :video-id="message.videoId"></youtube>
+                            <youtube :video-id="message.videoId" :player-vars="message.playerVars"></youtube>
                         </div>
                         <div v-else-if="message.type === 'start_broadcasting'" :class="message.type">
                             <span>
@@ -80,7 +80,7 @@
 
 <script>
     import SoundsComponent from '../plugins/sound.js'
-    import { getIdFromURL } from 'vue-youtube-embed'
+    import { getIdFromURL, getTimeFromURL } from 'vue-youtube-embed'
 
     const maxMessagesOnChatBuffer = 250;
 
@@ -200,7 +200,11 @@
                 let isYoutube = this.onYoutubeMessage(message);
                 if (isYoutube && this.$root.chatEmbedVideoEnabled === true) {
                     message.type = 'youtube';
-                    message.videoId = getIdFromURL(isYoutube[0])
+                    message.videoId = getIdFromURL(isYoutube[0]);
+                    let start = getTimeFromURL(isYoutube[0]);
+                    message.playerVars = {
+                        start: start
+                    };
                 }
 
                 this.messages.push(message);
