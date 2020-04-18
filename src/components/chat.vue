@@ -80,6 +80,7 @@
 
 <script>
     import SoundsComponent from '../plugins/sound.js'
+    import EmojiComponent from '../plugins/emoji.js'
     import { getIdFromURL, getTimeFromURL } from 'vue-youtube-embed'
 
     const maxMessagesOnChatBuffer = 250;
@@ -192,6 +193,9 @@
             },
             onMessage: function(message) {
                 let isMention = this.sendMentions(message);
+                if (message.content !== undefined) {
+                    message.content = EmojiComponent.processText(message.content);
+                }
 
                 if (this.$root.chatSoundEnabled && false === isMention && this.$root.user.uuid !== message.user.uuid) {
                     SoundsComponent.playBeepSound();
@@ -218,7 +222,7 @@
                 this.updateChatHeight();
             },
             onMessages: function(messages) {
-                this.messages = messages;
+                messages.forEach(this.onMessage);
 
                 let messageDom = $('.chat-messages');
                 messageDom.animate({ scrollTop: messageDom.prop('scrollHeight') }, 300);
