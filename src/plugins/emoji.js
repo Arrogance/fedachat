@@ -26,24 +26,15 @@ export default {
                 return;
             }
 
-            let firstChar = value[0];
-            let lastChar = value[value.length - 1];
+            try {
+                let emoji = toEmoji.get(value) || toEmoji.get(customMapping[value]);
+                if (emoji === undefined) {
+                    return;
+                }
 
-            if (
-                undefined === customMapping[value] &&
-                (firstChar !== ':' || lastChar !== ':')
-            ) {
-                return;
-            }
-
-            console.log(value);
-            let emoji = toEmoji.get(value) || toEmoji.get(customMapping[value]);
-            if (emoji === undefined) {
-                return;
-            }
-
-            let emojiCode = unicodeEmoji(emoji).split(' ');
-            text = text.replace(value, '&#x' + emojiCode[0]);
+                let emojiCode = unicodeEmoji(emoji).split(' ');
+                text = text.replace(value, '&#x' + emojiCode[0]);
+            } catch {}
         });
 
         return text;
