@@ -22,9 +22,11 @@ const customMapping = {
 export default {
     processText: function(text) {
         text.split(' ').forEach(function(value) {
-            let emoji =
-                toEmoji.get(value) ||
-                (customMapping[value] && toEmoji.get(customMapping[value]));
+            if (undefined === customMapping[value] && value[0] !== ':') {
+                return;
+            }
+
+            let emoji = toEmoji.get(value) || toEmoji.get(customMapping[value]);
             if (emoji === undefined) {
                 return;
             }
