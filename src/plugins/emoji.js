@@ -22,7 +22,13 @@ const customMapping = {
 export default {
     processText: function(text) {
         text.split(' ').forEach(function(value) {
-            if (undefined === customMapping[value] && value[0] !== ':') {
+            let firstChar = value[0];
+            let lastChar = value[value.length - 1];
+
+            if (
+                undefined === customMapping[value] &&
+                (firstChar !== ':' || lastChar !== ':')
+            ) {
                 return;
             }
 
