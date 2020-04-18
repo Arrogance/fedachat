@@ -3,6 +3,7 @@ import unicodeEmoji from 'emoji-unicode';
 
 const customMapping = {
     '<3': 'heart',
+    '</3': 'broken_heart',
     ':)': 'smile',
     ':(': 'slightly_frowning_face',
     ':P': 'yum',
