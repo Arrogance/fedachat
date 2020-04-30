@@ -11,7 +11,7 @@
             </b-row>
 
             <b-row class="mt-2">
-                <b-col cols="12" class="chat-messages pr-0 pl-4" :style="'height: '+ chatHeight +'px'">
+                <b-col cols="12" ref="chat-messages" class="chat-messages pr-0 pl-4" :style="'height: '+ chatHeight +'px'">
                     <div v-for="(message) in messages" v-bind:key="message.id" :id="'message-'+message.id">
                         <div v-if="message.type === 'connection'" :class="message.type">
                             <span>
@@ -214,7 +214,7 @@
                 this.messages.push(message);
 
                 if (this.messages.length > maxMessagesOnChatBuffer) {
-                    this.messages.shift();
+                    this.$refs['chat-messages'].getElementsByTagName('div')[0].remove();
                 }
 
                 let messageDom = $('.chat-messages');
