@@ -1,0 +1,71 @@
+@import "~bootstrap";
+@import "~bootstrap-vue";
+
+// Imports
+@import "header";
+@import "videos";
+@import "stream";
+@import "chat";
+@import "broadcast_initializer";
+@import "notifications";
+
+// Pages
+@import "index";
+
+// Themes
+@import "themes/dark";
+
+body {
+    &::-webkit-scrollbar {
+        width: 1em;
+    }
+
+    &::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        outline: 1px solid slategrey;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .cursor {
+        &.pointer {
+            cursor: pointer;
+        }
+    }
+
+    @media (max-width: 425px), (max-width: 768px) and (orientation: landscape) {
+        .hide-425 {
+            display: none;
+        }
+        .show-425 {
+            display: inline-block;
+        }
+        .hide-375 {
+            display: none;
+        }
+        .show-375 {
+            display: inline-block;
+        }
+        .capitalize-425 {
+            text-transform: capitalize;
+        }
+    }
+
+    @media (max-width: 375px) and (orientation: portrait) {
+        .hide-375 {
+            display: none;
+        }
+        .show-375 {
+            display: inline-block;
+        }
+        .capitalize-425 {
+            text-transform: capitalize;
+        }
+    }
+}

@@ -1,0 +1,47 @@
+#app-broadcast-initializer {
+    button {
+        //margin: 5px 0 0;
+        //@media (max-width: 425px) {
+        //    & {
+        //        margin: 5px 0 0;
+        //    }
+        //}
+    }
+}
+
+#app-broadcast-initializer-modal {
+    .media-list {
+        display: inline-block;
+        margin: 4px;
+        button {
+            text-align: center;
+            padding: 2px;
+            width: 140px;
+            height: 140px;
+            span {
+                padding: 1px 3px;
+                text-align: center;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                width: 130px;
+                display: block;
+            }
+            > svg:not(.b-iconstack) {
+                width: 35px;
+                height: 35px;
+            }
+
+            @media (max-width: 425px) {
+                & {
+                    width: 120px;
+                    height: 120px;
+
+                    span {
+                        width: 110px;
+                    }
+                }
+            }
+        }
+    }
+}
