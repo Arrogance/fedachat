@@ -27,7 +27,12 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: '~/plugins/socket.client.js', mode: 'client' }],
+  plugins: [
+    { src: '~/plugins/socket.client.js', mode: 'client' },
+    { src: '~/plugins/bootstrap_vue.client.js', mode: 'client' },
+    { src: '~/plugins/modernizr.client.js', mode: 'client' },
+    { src: '~/plugins/storage/storage.js' }
+  ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -62,9 +67,6 @@ export default {
    ** Build configuration
    */
   build: {
-    /*
-     ** You can extend webpack config here
-     */
     extend(config, ctx) {}
   },
   io: {

@@ -1,0 +1,16 @@
+{
+  "minify": true,
+  "options": [
+    "setClasses"
+  ],
+  "feature-detects": [
+    "test/cookies",
+    "test/svg",
+    "test/audio/webaudio",
+    "test/storage/localstorage",
+    "test/svg/asimg",
+    "test/svg/inline",
+    "test/webrtc/peerconnection",
+    "test/workers/webworkers"
+  ]
+}

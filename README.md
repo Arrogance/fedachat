@@ -68,6 +68,5 @@ Header add Access-Control-Allow-Origin "*"
 	Header add Access-Control-Allow-Origin "*"
 </Location>
 ```
-```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).

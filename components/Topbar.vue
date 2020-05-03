@@ -13,6 +13,12 @@
           <b-nav-item>
             <TopbarUsername />
           </b-nav-item>
+          <b-nav-item>
+            <TopbarOptions />
+          </b-nav-item>
+          <b-nav-item>
+            <TopbarDarkmode />
+          </b-nav-item>
           <!--          <b-nav-item>-->
           <!--            <b-button @click="toggleModal('options-modal')"> <b-icon-gear></b-icon-gear> <span class="sr-only">Opciones</span></b-button>-->
           <!--          </b-nav-item>-->
@@ -35,10 +41,14 @@
 
 <script>
 import TopbarUsername from './TopbarUsername'
+import TopbarOptions from './TopbarOptions'
+import TopbarDarkmode from './TopbarDarkmode'
 
 export default {
   components: {
-    TopbarUsername
+    TopbarUsername,
+    TopbarOptions,
+    TopbarDarkmode
   },
   computed: {
     isConnected() {
